@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/images/manifest.json">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuzhang1108.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="为什么进行线程同步？当多个线程共享相同的内存时，需要确保每个线程看到一致的数据视图。 数据混乱原因 资源共享（独享资源则不会） 调度随机（意味着数据访问会出现竞争） 线程间缺乏必要的同步机制  以上3点中，前两点不能改变，欲提高效率，传递数据，资源必须共享。只要资源一共享就会出现竞争。只要存在竞争，数据很容易出现混乱。所以，应该从线程间缺乏同步机制入手。使多个线程在访问共享资源时，出现互斥。 互斥">
+<meta property="og:type" content="article">
+<meta property="og:title" content="系统编程5-线程同步">
+<meta property="og:url" content="http://xuzhang1108.github.io/2021/05/15/%E7%B3%BB%E7%BB%9F%E7%BC%96%E7%A8%8B5-%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5/index.html">
+<meta property="og:site_name" content="XuZhang&#96;s blog">
+<meta property="og:description" content="为什么进行线程同步？当多个线程共享相同的内存时，需要确保每个线程看到一致的数据视图。 数据混乱原因 资源共享（独享资源则不会） 调度随机（意味着数据访问会出现竞争） 线程间缺乏必要的同步机制  以上3点中，前两点不能改变，欲提高效率，传递数据，资源必须共享。只要资源一共享就会出现竞争。只要存在竞争，数据很容易出现混乱。所以，应该从线程间缺乏同步机制入手。使多个线程在访问共享资源时，出现互斥。 互斥">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic3.zhimg.com/v2-e287f72408c491be3713e2b9d983cd66_b.png">
+<meta property="article:published_time" content="2021-05-15T13:21:37.000Z">
+<meta property="article:modified_time" content="2021-05-15T13:30:14.198Z">
+<meta property="article:author" content="XuZhang">
+<meta property="article:tag" content="编程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic3.zhimg.com/v2-e287f72408c491be3713e2b9d983cd66_b.png">
+
+<link rel="canonical" href="http://xuzhang1108.github.io/2021/05/15/%E7%B3%BB%E7%BB%9F%E7%BC%96%E7%A8%8B5-%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>系统编程5-线程同步 | XuZhang`s blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XuZhang`s blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录学习的点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">8</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuzhang1108.github.io/2021/05/15/%E7%B3%BB%E7%BB%9F%E7%BC%96%E7%A8%8B5-%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/author.jpg">
+      <meta itemprop="name" content="XuZhang">
+      <meta itemprop="description" content="海阔凭鱼跃，天高任鸟飞">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XuZhang`s blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          系统编程5-线程同步
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-05-15 21:21:37 / 修改时间：21:30:14" itemprop="dateCreated datePublished" datetime="2021-05-15T21:21:37+08:00">2021-05-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B3%BB%E7%BB%9F%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">系统编程</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="为什么进行线程同步？"><a href="#为什么进行线程同步？" class="headerlink" title="为什么进行线程同步？"></a>为什么进行线程同步？</h2><p>当多个线程共享相同的内存时，需要确保每个线程看到一致的数据视图。</p>
+<h3 id="数据混乱原因"><a href="#数据混乱原因" class="headerlink" title="数据混乱原因"></a><strong>数据混乱原因</strong></h3><ol>
+<li>资源共享（独享资源则不会）</li>
+<li>调度随机（意味着数据访问会出现竞争）</li>
+<li>线程间缺乏必要的同步机制</li>
+</ol>
+<p>以上3点中，前两点不能改变，欲提高效率，传递数据，资源必须共享。只要资源一共享就会出现竞争。只要存在竞争，数据很容易出现混乱。所以，应该从线程间缺乏同步机制入手。使多个线程在访问共享资源时，出现互斥。</p>
+<h3 id="互斥量mutex"><a href="#互斥量mutex" class="headerlink" title="互斥量mutex"></a><strong>互斥量mutex</strong></h3><p>Linux中提供一把互斥锁mutex（也称之为互斥量）。</p>
+<p>每个线程在对资源操作前都尝试先加锁，成功加锁才能操作，操作结束解锁。</p>
+<p>资源还是共享的，线程间还是竞争的。</p>
+<p>ps：同一时刻，只能有一个线程持有该锁。当 A 线程对某个全局变量加锁访问，B 在访问前尝试加锁，拿不到锁，B 阻塞。C 线程不去加锁，而直接访问该全局变量，依然能够访问，但会出现数据混乱。</p>
+<p>因此，即使有了 mutex，如果有线程不按规则来访问数据，依然会造成数据混乱。</p>
+<h3 id="主要应用函数"><a href="#主要应用函数" class="headerlink" title="主要应用函数"></a><strong>主要应用函数</strong></h3><p>pthread_mutex_init 函数</p>
+<p>pthread_mutex_destroy 函数</p>
+<p>pthread_mutex_lock 函数</p>
+<p>pthread_mutex_trylock 函数</p>
+<p>pthread_mutex_unlock 函数</p>
+<p><strong>以上 5 个函数的返回值都是：成功返回 0， 失败返回错误号。</strong></p>
+<p>pthread_mutex_t 类型，其本质是一个结构体。为简化理解，应用时可忽略其实现细节，简单当成整数看待。pthread_mutex_t mutex; 变量 mutex 只有两种取值 1、0。</p>
+<h3 id="pthread-mutex-init函数"><a href="#pthread-mutex-init函数" class="headerlink" title="pthread_mutex_init函数"></a><strong>pthread_mutex_init函数</strong></h3><p>初始化一个互斥锁(互斥量) —&gt; 初值可看作 1</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">pthread_mutex_init</span><span class="hljs-params">(<span class="hljs-keyword">pthread_mutex_t</span> *<span class="hljs-keyword">restrict</span> mutex, <span class="hljs-keyword">const</span> <span class="hljs-keyword">pthread_mutexattr_t</span> *<span class="hljs-keyword">restrict</span> attr)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<p>参 1：传出参数，调用时应传 &amp;mutex restrict 关键字：只用于限制指针，告诉编译器，所有修改该指针指向内存中内容的操作，只能通过本指针完成。 不能通过除本指针以外的其他变量或指针修改 参 2：互斥量属性。是一个传入参数，通常传 NULL，选用默认属性(线程间共享)。 参 APUE.12.4 同步属性</p>
+<ol>
+<li>静态初始化：如果互斥锁 mutex 是静态分配的（定义在全局，或加了 static 关键字修饰），可以直接 使用宏进行初始化。e.g. pthead_mutex_t muetx = PTHREAD_MUTEX_INITIALIZER;</li>
+</ol>
+<h3 id="pthread-mutex-destroy函数"><a href="#pthread-mutex-destroy函数" class="headerlink" title="pthread_mutex_destroy函数"></a><strong>pthread_mutex_destroy函数</strong></h3><p>销毁一个互斥锁</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">pthread_mutex_destroy</span><span class="hljs-params">(<span class="hljs-keyword">pthread_mutex_t</span>* mutex)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="pthread-mutex-lock函数"><a href="#pthread-mutex-lock函数" class="headerlink" title="pthread_mutex_lock函数"></a><strong>pthread_mutex_lock函数</strong></h3><p><strong>加锁</strong>。可理解成将**mutex–**（或-1），操作 后mutex的值为0。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">pthread_mutex_lock</span><span class="hljs-params">(<span class="hljs-keyword">pthread_mutex_t</span> *mutex)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="pthread-mutex-unlock函数"><a href="#pthread-mutex-unlock函数" class="headerlink" title="pthread_mutex_unlock函数"></a><strong>pthread_mutex_unlock函数</strong></h3><p><strong>解锁</strong>。可理解为将 **mutex ++**（或 +1），操作后 mutex 的值为 1。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">pthread_mutex_unlock</span><span class="hljs-params">(<span class="hljs-keyword">pthread_mutex_t</span> *mutex)</span></span><br></code></pre></td></tr></table></figure>
+
+<h3 id="pthread-mutex-trylock-函数"><a href="#pthread-mutex-trylock-函数" class="headerlink" title="pthread_mutex_trylock 函数"></a><strong>pthread_mutex_trylock 函数</strong></h3><p>尝试加锁</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">pthread_mutex_trylock</span><span class="hljs-params">(<span class="hljs-keyword">pthread_mutex_t</span> *mutex)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="加锁与解锁"><a href="#加锁与解锁" class="headerlink" title="加锁与解锁"></a><strong>加锁与解锁</strong></h3><p><strong>lock与unlock</strong></p>
+<p>lock 尝试加锁，如果加锁不成功，线程阻塞，阻塞到持有该互斥量的其他线程解锁为止。</p>
+<p>unlock 主动解锁函数，<strong>同时将阻塞在该锁上的所有线程全部唤醒</strong>，至于哪个线程先被唤醒，取决于优先级、调度。默认：先阻塞、先唤醒。</p>
+<p>例如：T1 T2 T3 T4 使用一把 mutex 锁。T1 加锁成功，其他线程均阻塞，直至 T1 解锁。T1 解锁后，T2 T3 T4 均被唤醒，并自动再次尝试加锁。</p>
+<p>可假想 mutex 锁 init 成功初值为 1。lock 功能是将 mutex–。而 unlock 则将 mutex++。</p>
+<p><strong>lock与trylock</strong></p>
+<p>lock加锁失败会阻塞，等待锁释放。</p>
+<p>trylock加锁失败直接返回错误号(如：EBUSY),不阻塞。</p>
+<h3 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a><strong>死锁</strong></h3><ol>
+<li>线程试图对同一个互斥量A加锁两次。</li>
+<li>线程1拥有A锁，请求获得B锁；线程2拥有B锁，请求获得A锁。</li>
+</ol>
+<h3 id="读写锁"><a href="#读写锁" class="headerlink" title="读写锁"></a><strong>读写锁</strong></h3><p>与互斥量类似，但读写锁允许更高的并行性。其特性为：写独占，读共享。</p>
+<h3 id="读写锁特性："><a href="#读写锁特性：" class="headerlink" title="读写锁特性："></a><strong>读写锁特性：</strong></h3><ol>
+<li>读写锁是“写模式加锁”时， 解锁前，所有对该锁加锁的线程都会被阻塞。</li>
+<li>读写锁是“读模式加锁”时， 如果线程以读模式对其加锁会成功；如果线程以写模式加锁会阻塞。</li>
+<li>读写锁是“读模式加锁”时， 既有试图以写模式加锁的线程，也有试图以读模式加锁的线程。那么读写锁会阻塞随后的读模式锁请求。优先满足写模式锁。读锁、写锁并行阻塞，写锁优先级高</li>
+</ol>
+<p>读写锁也叫共享-独占锁。当读写锁以读模式锁住时，它是以共享模式锁住的；当它以写模式锁住时，它是以独占模式锁住的。写独占、读共享。读写锁非常适合于对数据结构读的次数远大于写的情况。</p>
+<h3 id="主要应用函数-1"><a href="#主要应用函数-1" class="headerlink" title="主要应用函数"></a><strong>主要应用函数</strong></h3><ul>
+<li>pthread_rwlock_init 函数</li>
+<li>pthread_rwlock_destroy 函数</li>
+<li>pthread_rwlock_rdlock 函数 </li>
+<li>pthread_rwlock_wrlock 函数</li>
+<li>pthread_rwlock_tryrdlock 函</li>
+<li>pthread_rwlock_trywrlock 函数</li>
+<li>pthread_rwlock_unlock 函数</li>
+</ul>
+<p>以上 7 个函数的返回值都是：成功返回 0， 失败直接返回错误号。</p>
+<ul>
+<li>pthread_rwlock_t 类型 用于定义一个读写锁变量。 pthread_rwlock_t rwlock;</li>
+</ul>
+<h3 id="pthread-rwlock-init-函数"><a href="#pthread-rwlock-init-函数" class="headerlink" title="pthread_rwlock_init 函数"></a><strong>pthread_rwlock_init 函数</strong></h3><p>初始化一把读写锁</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">pthread_rwlock_init</span><span class="hljs-params">(<span class="hljs-keyword">pthread_rwlock_t</span> *<span class="hljs-keyword">restrict</span> rwlock, <span class="hljs-keyword">const</span> <span class="hljs-keyword">pthread_rwlockattr_t</span> *<span class="hljs-keyword">restrict</span> attr)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<p>参 2：attr 表读写锁属性，通常使用默认属性，传 NULL 即可。</p>
+<h3 id="pthread-rwlock-destroy-函数"><a href="#pthread-rwlock-destroy-函数" class="headerlink" title="pthread_rwlock_destroy 函数"></a><strong>pthread_rwlock_destroy 函数</strong></h3><p>销毁一把读写锁</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">pthread_rwlock_destroy</span><span class="hljs-params">(<span class="hljs-keyword">pthread_rwlock_t</span> *rwlock)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="pthread-rwlock-rdlock-函数"><a href="#pthread-rwlock-rdlock-函数" class="headerlink" title="pthread_rwlock_rdlock 函数"></a><strong>pthread_rwlock_rdlock 函数</strong></h3><p>以读方式请求读写锁。（常简称为：请求读锁）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">pthread_rwlock_rdlock</span><span class="hljs-params">(<span class="hljs-keyword">pthread_rwlock_t</span> *rwlock)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="pthread-rwlock-wrlock-函数"><a href="#pthread-rwlock-wrlock-函数" class="headerlink" title="pthread_rwlock_wrlock 函数"></a><strong>pthread_rwlock_wrlock 函数</strong></h3><p>以写方式请求读写锁。（常简称为：请求写锁）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">pthread_rwlock_wrlock</span><span class="hljs-params">(<span class="hljs-keyword">pthread_rwlock_t</span> *rwlock)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="pthread-rwlock-unlock-函数"><a href="#pthread-rwlock-unlock-函数" class="headerlink" title="pthread_rwlock_unlock 函数"></a><strong>pthread_rwlock_unlock 函数</strong></h3><p>解锁</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">pthread_rwlock_unlock</span><span class="hljs-params">(<span class="hljs-keyword">pthread_rwlock_t</span> *rwlock)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="pthread-rwlock-tryrdlock-函数"><a href="#pthread-rwlock-tryrdlock-函数" class="headerlink" title="pthread_rwlock_tryrdlock 函数"></a><strong>pthread_rwlock_tryrdlock 函数</strong></h3><p>非阻塞以读方式请求读写锁（非阻塞请求读锁）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">pthread_rwlock_tryrdlock</span><span class="hljs-params">(<span class="hljs-keyword">pthread_rwlock_t</span> *rwlock)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<p>非阻塞以写方式请求读写锁（非阻塞请求写锁）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">pthread_rwlock_trywrlock</span><span class="hljs-params">(<span class="hljs-keyword">pthread_rwlock_t</span> *rwlock)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="条件变量"><a href="#条件变量" class="headerlink" title="条件变量"></a><strong>条件变量</strong></h3><p>条件变量本身不是锁！但它也可以造成线程阻塞。通常与互斥锁配合使用。给多线程提供一个会合的场所。</p>
+<h3 id="主要应用函数-2"><a href="#主要应用函数-2" class="headerlink" title="主要应用函数"></a><strong>主要应用函数</strong></h3><ul>
+<li>pthread_cond_init 函数</li>
+<li>pthread_cond_destroy 函数</li>
+<li>pthread_cond_wait 函数</li>
+<li>pthread_cond_timedwait 函数</li>
+<li>pthread_cond_signal 函数</li>
+<li>pthread_cond_broadcast 函数</li>
+</ul>
+<p>以上 6 个函数的返回值都是：成功返回 0， 失败直接返回错误号。</p>
+<ul>
+<li>pthread_cond_t 类型 用于定义条件变量 pthread_cond_t cond;</li>
+</ul>
+<h3 id="pthread-cond-init-函数"><a href="#pthread-cond-init-函数" class="headerlink" title="pthread_cond_init 函数"></a><strong>pthread_cond_init 函数</strong></h3><p>初始化一个条件变量</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">pthread_cond_init</span><span class="hljs-params">(<span class="hljs-keyword">pthread_cond_t</span> *<span class="hljs-keyword">restrict</span> cond, <span class="hljs-keyword">const</span> <span class="hljs-keyword">pthread_condattr_t</span> *<span class="hljs-keyword">restrict</span> attr)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<p>参 2：attr 表条件变量属性，通常为默认值，传 NULL 即可</p>
+<p>也可以使用静态初始化的方法，初始化条件变量：</p>
+<p>pthread_cond_t cond = PTHREAD_COND_INITIALIZER;</p>
+<h3 id="pthread-cond-destroy-函数"><a href="#pthread-cond-destroy-函数" class="headerlink" title="pthread_cond_destroy 函数"></a><strong>pthread_cond_destroy 函数</strong></h3><p>销毁一个条件变量</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">pthread_cond_destroy</span><span class="hljs-params">(<span class="hljs-keyword">pthread_cond_t</span> *cond)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="pthread-cond-wait-函数"><a href="#pthread-cond-wait-函数" class="headerlink" title="pthread_cond_wait 函数"></a><strong>pthread_cond_wait 函数</strong></h3><p>阻塞等待一个条件变量</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">pthread_cond_wait</span><span class="hljs-params">(<span class="hljs-keyword">pthread_cond_t</span> *<span class="hljs-keyword">restrict</span> cond, <span class="hljs-keyword">pthread_mutex_t</span> *<span class="hljs-keyword">restrict</span> mutex)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<p>函数作用：</p>
+<ol>
+<li>阻塞等待条件变量 cond（参 1）满足</li>
+<li>释放已掌握的互斥锁（解锁互斥量）相当于 pthread_mutex_unlock(&amp;mutex); 1.2.两步为一个原子操作。</li>
+<li>当被唤醒，pthread_cond_wait 函数返回时，解除阻塞并重新申请获取互斥pthread_mutex_lock(&amp;mutex);</li>
+</ol>
+<h3 id="pthread-cond-timedwait-函数"><a href="#pthread-cond-timedwait-函数" class="headerlink" title="pthread_cond_timedwait 函数"></a><strong>pthread_cond_timedwait 函数</strong></h3><p>限时等待一个条件变量</p>
+<h3 id="pthread-cond-signal-函数"><a href="#pthread-cond-signal-函数" class="headerlink" title="pthread_cond_signal 函数 -"></a><strong>pthread_cond_signal 函数 -</strong></h3><p>唤醒至少一个阻塞在条件变量上的线程</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">pthread_cond_signal</span><span class="hljs-params">(<span class="hljs-keyword">pthread_cond_t</span> *cond)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="pthread-cond-broadcast-函数"><a href="#pthread-cond-broadcast-函数" class="headerlink" title="pthread_cond_broadcast 函数"></a><strong>pthread_cond_broadcast 函数</strong></h3><p>唤醒全部阻塞在条件变量上的线程 </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">pthread_cond_broadcast</span><span class="hljs-params">(<span class="hljs-keyword">pthread_cond_t</span> *cond)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="生产者消费者条件变量模型"><a href="#生产者消费者条件变量模型" class="headerlink" title="生产者消费者条件变量模型"></a><strong>生产者消费者条件变量模型</strong></h3><p>线程同步典型的案例即为生产者消费者模型，而借助条件变量来实现这一模型，是比较常见的一种方法。假定有两个线程，一个模拟生产者行为，一个模拟消费者行为。两个线程同时操作一个共享资源（一般称之为汇聚），生产向其中添加产品，消费者从中消费掉产品。</p>
+<h3 id="条件变量优点"><a href="#条件变量优点" class="headerlink" title="条件变量优点"></a><strong>条件变量优点</strong></h3><p>相较于 mutex 而言，条件变量可以减少竞争。</p>
+<p>如直接使用 mutex，除了生产者、消费者之间要竞争互斥量以外，消费者之间也需要竞争互斥量，但如果汇聚（链表）中没有数据，消费者之间竞争互斥锁是无意义的。有了条件变量机制以后，只有生产者完成生产，才会起消费者之间的竞争。提高了程序效率。</p>
+<h3 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a><strong>信号量</strong></h3><p>进化版的互斥锁（1 –&gt; N）由于互斥锁的粒度比较大，如果我们希望在多个线程间对某一对象的部分数据进行共享，使用互斥锁是没有办法实现的，只能将整个数据对象锁住。这样虽然达到了多线程操作共享数据时保证数据正确性的目的，却无形中导致线程的并发性下降。线程从并行执行，变成了串行执行。与直接使用单进程无异。信号量，是相对折中的一种处理方式，既能保证同步，数据不混乱，又能提高线程并发。</p>
+<h3 id="主要应用函数-3"><a href="#主要应用函数-3" class="headerlink" title="主要应用函数"></a><strong>主要应用函数</strong></h3><ul>
+<li>sem_init 函数</li>
+<li>sem_destroy 函数</li>
+<li>sem_wait 函数</li>
+<li>sem_trywait 函数</li>
+<li>sem_timedwait 函数</li>
+<li>sem_post 函数</li>
+</ul>
+<p>以上 6 个函数的返回值都是：成功返回 0， 失败返回-1，同时设置 errno。(注意，它们没有 pthread 前缀)</p>
+<ul>
+<li>sem_t 类型，本质仍是结构体。但应用期间可简单看作为整数，忽略实现细节（类似于使用文件描述符）。 sem_t sem; 规定信号量 sem 不能 &lt; 0。头文件 &lt;semaphore.h&gt;</li>
+</ul>
+<h3 id="信号量基本操作"><a href="#信号量基本操作" class="headerlink" title="信号量基本操作"></a><strong>信号量基本操作</strong></h3><p>sem_wait:  1. 信号量大于 0，则信号量–（类比 pthread_mutex_lock） </p>
+<p>​        |              2.信号量等于 0，造成线程阻塞对应 </p>
+<p>  对应</p>
+<p>​        |</p>
+<p>sem_post： 将信号量++，同时唤醒阻塞在信号量上的线程 (类比pthread_mutex_unlock）</p>
+<p>但，由于 sem_t 的实现对用户隐藏，所以所谓的++, –操作只能通过函数来实现，而不能直接++、–符号。 </p>
+<p><strong>信号量的初值，决定了占用信号量的线程的个数</strong></p>
+<h3 id="sem-init-函数"><a href="#sem-init-函数" class="headerlink" title="sem_init 函数"></a><strong>sem_init 函数</strong></h3><p>初始化一个信号量</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">sem_init</span><span class="hljs-params">(<span class="hljs-keyword">sem_t</span> *sem, <span class="hljs-keyword">int</span> pshared, <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> value)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<p>参 1：sem 信号量</p>
+<p>参 2：pshared 取 0 用于线程间；取非 0（一般为 1）用于进程间</p>
+<p>参 3：value 指定信号量初值</p>
+<h3 id="sem-destroy-函数"><a href="#sem-destroy-函数" class="headerlink" title="sem_destroy 函数"></a><strong>sem_destroy 函数</strong></h3><p>销毁一个信号量</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">sem_destroy</span><span class="hljs-params">(<span class="hljs-keyword">sem_t</span> *sem)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="sem-wait-函数"><a href="#sem-wait-函数" class="headerlink" title="sem_wait 函数"></a><strong>sem_wait 函数</strong></h3><p>给信号量加锁 –</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">sem_wait</span><span class="hljs-params">(<span class="hljs-keyword">sem_t</span> *sem)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="sem-post-函数"><a href="#sem-post-函数" class="headerlink" title="sem_post 函数"></a><strong>sem_post 函数</strong></h3><p>给信号量解锁 ++</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">sem_post</span><span class="hljs-params">(<span class="hljs-keyword">sem_t</span> *sem)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="sem-trywait-函数"><a href="#sem-trywait-函数" class="headerlink" title="sem_trywait 函数"></a><strong>sem_trywait 函数</strong></h3><p>尝试对信号量加锁 – (与 sem_wait 的区别类比 lock 和 trylock)</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">sem_trywait</span><span class="hljs-params">(<span class="hljs-keyword">sem_t</span> *sem)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<h3 id="sem-timedwait-函数"><a href="#sem-timedwait-函数" class="headerlink" title="sem_timedwait 函数"></a><strong>sem_timedwait 函数</strong></h3><p>限时尝试对信号量加锁–</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">sem_timedwait</span><span class="hljs-params">(<span class="hljs-keyword">sem_t</span> *sem, <span class="hljs-keyword">const</span> struct timespec *abs_timeout)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<p>参 2：abs_timeout 采用的是绝对时间。</p>
+<p>定时 1 秒：</p>
+<p>time_t cur = time(NULL); 获取当前时间。</p>
+<p>struct timespec t; 定义 timespec 结构体变量 t</p>
+<p>t.tv_sec = cur+1; 定时 1 秒t.tv_nsec = t.tv_sec +100; </p>
+<p>sem_timedwait(&amp;sem, &amp;t); 传参</p>
+<h3 id="生产者消费者信号量模型"><a href="#生产者消费者信号量模型" class="headerlink" title="生产者消费者信号量模型"></a><strong>生产者消费者信号量模型</strong></h3><p><img src="https://pic3.zhimg.com/v2-e287f72408c491be3713e2b9d983cd66_b.png" alt="img"></p>
+
+    </div>
+
+    
+    
+    
+
+      <div>
+        
+          <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+        
+      </div>
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag"><i class="fa fa-tag"></i>编程</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/05/15/%E7%B3%BB%E7%BB%9F%E7%BC%96%E7%A8%8B4-%E7%BA%BF%E7%A8%8B/" rel="prev" title="系统编程4-线程">
+      <i class="fa fa-chevron-left"></i> 系统编程4-线程
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/05/15/%E7%B3%BB%E7%BB%9F%E7%BC%96%E7%A8%8B6-%E7%AE%A1%E9%81%93/" rel="next" title="系统编程6-管道">
+      系统编程6-管道 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%9B%E8%A1%8C%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">为什么进行线程同步？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%B7%B7%E4%B9%B1%E5%8E%9F%E5%9B%A0"><span class="nav-number">1.1.</span> <span class="nav-text">数据混乱原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%92%E6%96%A5%E9%87%8Fmutex"><span class="nav-number">1.2.</span> <span class="nav-text">互斥量mutex</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E5%BA%94%E7%94%A8%E5%87%BD%E6%95%B0"><span class="nav-number">1.3.</span> <span class="nav-text">主要应用函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pthread-mutex-init%E5%87%BD%E6%95%B0"><span class="nav-number">1.4.</span> <span class="nav-text">pthread_mutex_init函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pthread-mutex-destroy%E5%87%BD%E6%95%B0"><span class="nav-number">1.5.</span> <span class="nav-text">pthread_mutex_destroy函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pthread-mutex-lock%E5%87%BD%E6%95%B0"><span class="nav-number">1.6.</span> <span class="nav-text">pthread_mutex_lock函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pthread-mutex-unlock%E5%87%BD%E6%95%B0"><span class="nav-number">1.7.</span> <span class="nav-text">pthread_mutex_unlock函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pthread-mutex-trylock-%E5%87%BD%E6%95%B0"><span class="nav-number">1.8.</span> <span class="nav-text">pthread_mutex_trylock 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E9%94%81%E4%B8%8E%E8%A7%A3%E9%94%81"><span class="nav-number">1.9.</span> <span class="nav-text">加锁与解锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%BB%E9%94%81"><span class="nav-number">1.10.</span> <span class="nav-text">死锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BB%E5%86%99%E9%94%81"><span class="nav-number">1.11.</span> <span class="nav-text">读写锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BB%E5%86%99%E9%94%81%E7%89%B9%E6%80%A7%EF%BC%9A"><span class="nav-number">1.12.</span> <span class="nav-text">读写锁特性：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E5%BA%94%E7%94%A8%E5%87%BD%E6%95%B0-1"><span class="nav-number">1.13.</span> <span class="nav-text">主要应用函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pthread-rwlock-init-%E5%87%BD%E6%95%B0"><span class="nav-number">1.14.</span> <span class="nav-text">pthread_rwlock_init 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pthread-rwlock-destroy-%E5%87%BD%E6%95%B0"><span class="nav-number">1.15.</span> <span class="nav-text">pthread_rwlock_destroy 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pthread-rwlock-rdlock-%E5%87%BD%E6%95%B0"><span class="nav-number">1.16.</span> <span class="nav-text">pthread_rwlock_rdlock 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pthread-rwlock-wrlock-%E5%87%BD%E6%95%B0"><span class="nav-number">1.17.</span> <span class="nav-text">pthread_rwlock_wrlock 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pthread-rwlock-unlock-%E5%87%BD%E6%95%B0"><span class="nav-number">1.18.</span> <span class="nav-text">pthread_rwlock_unlock 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pthread-rwlock-tryrdlock-%E5%87%BD%E6%95%B0"><span class="nav-number">1.19.</span> <span class="nav-text">pthread_rwlock_tryrdlock 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F"><span class="nav-number">1.20.</span> <span class="nav-text">条件变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E5%BA%94%E7%94%A8%E5%87%BD%E6%95%B0-2"><span class="nav-number">1.21.</span> <span class="nav-text">主要应用函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pthread-cond-init-%E5%87%BD%E6%95%B0"><span class="nav-number">1.22.</span> <span class="nav-text">pthread_cond_init 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pthread-cond-destroy-%E5%87%BD%E6%95%B0"><span class="nav-number">1.23.</span> <span class="nav-text">pthread_cond_destroy 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pthread-cond-wait-%E5%87%BD%E6%95%B0"><span class="nav-number">1.24.</span> <span class="nav-text">pthread_cond_wait 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pthread-cond-timedwait-%E5%87%BD%E6%95%B0"><span class="nav-number">1.25.</span> <span class="nav-text">pthread_cond_timedwait 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pthread-cond-signal-%E5%87%BD%E6%95%B0"><span class="nav-number">1.26.</span> <span class="nav-text">pthread_cond_signal 函数 -</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pthread-cond-broadcast-%E5%87%BD%E6%95%B0"><span class="nav-number">1.27.</span> <span class="nav-text">pthread_cond_broadcast 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.28.</span> <span class="nav-text">生产者消费者条件变量模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F%E4%BC%98%E7%82%B9"><span class="nav-number">1.29.</span> <span class="nav-text">条件变量优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="nav-number">1.30.</span> <span class="nav-text">信号量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E5%BA%94%E7%94%A8%E5%87%BD%E6%95%B0-3"><span class="nav-number">1.31.</span> <span class="nav-text">主要应用函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="nav-number">1.32.</span> <span class="nav-text">信号量基本操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sem-init-%E5%87%BD%E6%95%B0"><span class="nav-number">1.33.</span> <span class="nav-text">sem_init 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sem-destroy-%E5%87%BD%E6%95%B0"><span class="nav-number">1.34.</span> <span class="nav-text">sem_destroy 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sem-wait-%E5%87%BD%E6%95%B0"><span class="nav-number">1.35.</span> <span class="nav-text">sem_wait 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sem-post-%E5%87%BD%E6%95%B0"><span class="nav-number">1.36.</span> <span class="nav-text">sem_post 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sem-trywait-%E5%87%BD%E6%95%B0"><span class="nav-number">1.37.</span> <span class="nav-text">sem_trywait 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sem-timedwait-%E5%87%BD%E6%95%B0"><span class="nav-number">1.38.</span> <span class="nav-text">sem_timedwait 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E4%BF%A1%E5%8F%B7%E9%87%8F%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.39.</span> <span class="nav-text">生产者消费者信号量模型</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XuZhang"
+      src="/images/author.jpg">
+  <p class="site-author-name" itemprop="name">XuZhang</p>
+  <div class="site-description" itemprop="description">海阔凭鱼跃，天高任鸟飞</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/xuzhang1108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;xuzhang1108" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/bu-ke-zhi-wei-zhi" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;bu-ke-zhi-wei-zhi" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>知乎</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xuzhang</span>
+</div>
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+		Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+		year - 作为date对象的年份，为4位年份值
+		month - 0-11之间的整数，做为date对象的月份
+		day - 1-31之间的整数，做为date对象的天数
+		hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+		minutes - 0-59之间的整数，做为date对象的分钟数
+		seconds - 0-59之间的整数，做为date对象的秒数
+		microseconds - 0-999之间的整数，做为date对象的毫秒数
+        */
+		var t1 = Date.UTC(2021,05,14,12,00,00); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+-->
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

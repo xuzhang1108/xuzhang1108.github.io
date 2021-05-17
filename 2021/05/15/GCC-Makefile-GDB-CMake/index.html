@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/images/manifest.json">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuzhang1108.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="GCC compile tutorialGCC编译器支持编译Go， Objective-C， Objective-C++， Fortran， Ada， 等程序； 1.编译过程 预处理 - Pre-Processing &#x2F;&#x2F; .i文件  12# -E 选项指示编译器仅对输入文件进行预处理g++ -E test.cpp -o test.i     &#x2F;&#x2F; .i文件  2.编译- Compiling &#x2F;&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GCC-Makefile-GDB-CMake">
+<meta property="og:url" content="http://xuzhang1108.github.io/2021/05/15/GCC-Makefile-GDB-CMake/index.html">
+<meta property="og:site_name" content="XuZhang&#96;s blog">
+<meta property="og:description" content="GCC compile tutorialGCC编译器支持编译Go， Objective-C， Objective-C++， Fortran， Ada， 等程序； 1.编译过程 预处理 - Pre-Processing &#x2F;&#x2F; .i文件  12# -E 选项指示编译器仅对输入文件进行预处理g++ -E test.cpp -o test.i     &#x2F;&#x2F; .i文件  2.编译- Compiling &#x2F;&#x2F;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-05-15T13:34:53.000Z">
+<meta property="article:modified_time" content="2021-05-16T02:44:39.516Z">
+<meta property="article:author" content="XuZhang">
+<meta property="article:tag" content="C&#x2F;C++">
+<meta property="article:tag" content="Makefile">
+<meta property="article:tag" content="CMake">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://xuzhang1108.github.io/2021/05/15/GCC-Makefile-GDB-CMake/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>GCC-Makefile-GDB-CMake | XuZhang`s blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XuZhang`s blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录学习的点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">8</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuzhang1108.github.io/2021/05/15/GCC-Makefile-GDB-CMake/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/author.jpg">
+      <meta itemprop="name" content="XuZhang">
+      <meta itemprop="description" content="海阔凭鱼跃，天高任鸟飞">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XuZhang`s blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          GCC-Makefile-GDB-CMake
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-15 21:34:53" itemprop="dateCreated datePublished" datetime="2021-05-15T21:34:53+08:00">2021-05-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-16 10:44:39" itemprop="dateModified" datetime="2021-05-16T10:44:39+08:00">2021-05-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C-C/" itemprop="url" rel="index"><span itemprop="name">C/C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="GCC-compile-tutorial"><a href="#GCC-compile-tutorial" class="headerlink" title="GCC compile tutorial"></a>GCC compile tutorial</h2><p>GCC编译器支持编译Go， Objective-C， Objective-C++， Fortran， Ada， 等程序；</p>
+<h2 id="1-编译过程"><a href="#1-编译过程" class="headerlink" title="1.编译过程"></a>1.编译过程</h2><ol>
+<li><strong>预处理 - Pre-Processing // .i文件</strong></li>
+</ol>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs awk"><span class="hljs-comment"># -E 选项指示编译器仅对输入文件进行预处理</span><br>g++ -E test.cpp -o test.i     <span class="hljs-regexp">//</span> .i文件<br></code></pre></td></tr></table></figure>
+
+<p>2.<strong>编译- Compiling // .s文件</strong></p>
+<figure class="highlight brainfuck"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs brainfuck"><span class="hljs-comment">#</span> <span class="hljs-literal">-</span><span class="hljs-comment">S</span> <span class="hljs-comment">编译选项告诉</span> <span class="hljs-comment">g</span>++ <span class="hljs-comment">在为</span> <span class="hljs-comment">C</span>++ <span class="hljs-comment">代码产生了汇编语言文件后停止编译</span><br><span class="hljs-comment">#</span> <span class="hljs-comment">g</span>++ <span class="hljs-comment">产生的汇编语言文件的缺省拓展名为</span> <span class="hljs-string">.</span><span class="hljs-comment">s</span><br><span class="hljs-comment">g</span>++ <span class="hljs-literal">-</span><span class="hljs-comment">S</span> <span class="hljs-comment">test</span><span class="hljs-string">.</span><span class="hljs-comment">i</span> <span class="hljs-literal">-</span><span class="hljs-comment">o</span> <span class="hljs-comment">test</span><span class="hljs-string">.</span><span class="hljs-comment">s</span><br></code></pre></td></tr></table></figure>
+
+<p>3.<strong>汇编-Assembling // .o文件</strong></p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-comment"># -c 选项告诉 g++ 仅把源代码编译为机器语言的目标代码</span><br><span class="hljs-comment">#  缺省时 g++ 建立的目标代码文件有一个 .o 的拓展名</span><br>g++ -c <span class="hljs-keyword">test</span>.s -o <span class="hljs-keyword">test</span>.o<br></code></pre></td></tr></table></figure>
+
+<p>4.<strong>链接-Linking // bin文件</strong></p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-comment"># -o 编译选项来为将产生的可执行文件用指定的文件名</span><br>g++ <span class="hljs-keyword">test</span>.o -o <span class="hljs-keyword">test</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="2-g-重要编译参数"><a href="#2-g-重要编译参数" class="headerlink" title="2.g++重要编译参数"></a>2.g++重要编译参数</h2><ol>
+<li><strong>-g 编译带调试信息的可执行文件</strong></li>
+</ol>
+<figure class="highlight vala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs vala"><span class="hljs-meta"># -g 选项告诉 GCC 产生能被 GNU 调试器GDB使用的调试信息， 已调试程序</span><br><br><span class="hljs-meta"># 产生带调试信息的可执行文件test</span><br>g++ -g test.cpp<br></code></pre></td></tr></table></figure>
+
+<ol>
+<li><strong>-O[n] 优化源代码</strong></li>
+</ol>
+<figure class="highlight vala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs vala"><span class="hljs-meta">## 所谓优化， 例如省略掉代码中从未使用过的变量，直接将常量表达式用结果值代替等等，这些操作会缩减目标文件所包含的代码量，提高最终生成的可执行文件的运行效率</span><br><br><span class="hljs-meta"># -O 选项告诉 g++ 对源码进行基本优化。 这些优化在大多数情况下都会使程序执行的更快。 -O2选项告诉g++ 产生尽可能小和尽可能快的代码。 如-O2， -O3，-On（n常为0-3）</span><br><span class="hljs-meta"># -O同时减小代码的长度和执行时间，其效果等价于 -O1</span><br><span class="hljs-meta"># -O0 表示不做优化</span><br><span class="hljs-meta"># -O1 为默认优化</span><br><span class="hljs-meta"># -O2 除了完成-O1的优化之外， 还进行一些额外的调整工作，如指令调整等。</span><br><span class="hljs-meta"># -O3 则包括循环展开和其他一些与处理特性相关的优化工作。</span><br><span class="hljs-meta"># 选项将使编译的速度比使用 -O 时慢， 但通常产生的代码执行速度会更快。</span><br><br><span class="hljs-meta">#使用 -O2优化源代码 并输出可执行文件</span><br>g++ -O2 test.cpp<br></code></pre></td></tr></table></figure>
+
+<ol>
+<li><strong>-l 和 -L 指定库文件 | 指定库文件路径</strong></li>
+</ol>
+<figure class="highlight vala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs vala"><span class="hljs-meta"># -l参数就是用来指定程序要链接的库， -l参数紧接着就是库名</span><br><span class="hljs-meta"># 在 /lib 和 /usr/lib 和 /usr/local/lib 里的库直接使用-l参数就能链接</span><br><br><span class="hljs-meta"># 链接glog库</span><br>g++ -lglog test.cpp<br><br><span class="hljs-meta"># 如果库文件没放在上面三个目录里， 需要使用-L参数指定库文件所在目录</span><br><span class="hljs-meta"># -L参数跟着的是库文件所在的目录名</span><br><br><span class="hljs-meta"># 链接 mytest库， libmytest.so在 /home/bing/mytestlibfolder 目录下</span><br>g++ -L/home/bing/mytestlibfolder -lmytest test.cpp<br></code></pre></td></tr></table></figure>
+
+<ol>
+<li><strong>-I （include的意思）指定头文件搜索目录</strong></li>
+</ol>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs gradle"># -I<br># <span class="hljs-regexp">/usr/i</span>nclude目录一般是不用指定的， gcc知道去哪里找，但是如果头文件不在<span class="hljs-regexp">/usr/i</span>nclude里我们就要用 -I参数指定，比如头文件放在<span class="hljs-regexp">/myinclude目录里， 那编译命令就要加上 -I/myi</span>nclude 参数了，如果不加你就会得到一个“xxxx.h:: No such <span class="hljs-keyword">file</span> or directory”的错误。-I参数可用相对路径，比如头文件在当前目录， 可用 -I. 来指定。上面我们提到的 -cflags 参数就是用来生成 -I参数的。<br><br>g++ -I/myinclude test.cpp<br></code></pre></td></tr></table></figure>
+
+<ol>
+<li><strong>-Wall 打印警告信息</strong> （Wall 这是 W + all）</li>
+</ol>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-comment"># 打印出gcc提供的警告信息</span><br>g++ -Wall <span class="hljs-keyword">test</span>.cpp<br></code></pre></td></tr></table></figure>
+
+<ol>
+<li><strong>-w 关闭警告信息</strong></li>
+</ol>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-comment"># 关闭所有警告信息</span><br>g++ -w <span class="hljs-keyword">test</span>.cp<br></code></pre></td></tr></table></figure>
+
+<ol>
+<li><strong>-std=c++11 设置编译标准</strong></li>
+</ol>
+<figure class="highlight brainfuck"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs brainfuck"><span class="hljs-comment">#</span> <span class="hljs-comment">使用</span> <span class="hljs-comment">c</span>++<span class="hljs-comment">11</span> <span class="hljs-comment">标准编译</span> <span class="hljs-comment">test</span><span class="hljs-string">.</span><span class="hljs-comment">cpp</span><br><span class="hljs-comment">g</span>++ <span class="hljs-literal">-</span><span class="hljs-comment">std=c</span>++<span class="hljs-comment">11</span> <span class="hljs-comment">test</span><span class="hljs-string">.</span><span class="hljs-comment">cpp</span><br></code></pre></td></tr></table></figure>
+
+<ol>
+<li><strong>-o 指定输出文件名</strong></li>
+</ol>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-comment"># 指定即将产生的文件名</span><br><br><span class="hljs-comment">#指定输出可执行文件名为test</span><br>g++ <span class="hljs-keyword">test</span>.cpp -o <span class="hljs-keyword">test</span><br></code></pre></td></tr></table></figure>
+
+<ol>
+<li><strong>-D 定义宏</strong></li>
+</ol>
+<figure class="highlight vala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs vala"><span class="hljs-meta"># 在使用gcc/g++ 编译的时候定义宏</span><br><br><span class="hljs-meta"># 常用场景</span><br><span class="hljs-meta"># -DDEBUG 定义DEBUG宏， 可能文件中有DEBUG宏部分的相关信息，用个DDEBUG来选择开启或关闭DEBUG</span><br></code></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// -Dname 定义宏name， 默认定义内容为字符串“1”</span><br><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-meta">#<span class="hljs-meta-keyword">ifdef</span> DEBUG</span><br>    	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;DEBUG LOG\n&quot;</span>);<br>    <span class="hljs-meta">#<span class="hljs-meta-keyword">endif</span></span><br>    	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;in\n&quot;</span>);<br>&#125;<br><br><span class="hljs-comment">// 1.在编译的时候，使用g++ -DDEBUG mian.cpp</span><br><span class="hljs-comment">// 2.#ifdef DEBUG 这行代码会被执行</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="3-Exercise"><a href="#3-Exercise" class="headerlink" title="3.Exercise"></a>3.Exercise</h2><h3 id="1-直接编译"><a href="#1-直接编译" class="headerlink" title="1.直接编译"></a>1.直接编译</h3><p><strong>最简单的编译，并运行</strong></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs css"># 将<span class="hljs-selector-tag">main</span><span class="hljs-selector-class">.cpp</span> /<span class="hljs-attribute">src</span>/Swap<span class="hljs-selector-class">.cpp</span> 编译为可执行文件<br>g++ mian<span class="hljs-selector-class">.cpp</span> <span class="hljs-attribute">src</span>/Swap<span class="hljs-selector-class">.cpp</span> -Iinclude<br><br>#运行 <span class="hljs-selector-tag">a</span><span class="hljs-selector-class">.out</span><br>./<span class="hljs-selector-tag">a</span><span class="hljs-selector-class">.out</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>增加参数编译，并运行</strong></p>
+<figure class="highlight pf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs pf"><span class="hljs-comment"># 将main.cpp /src/Swap.cpp 编译为可执行文件 附带一堆参数</span><br>g++ main.cpp src/Swap.cpp -Iinclude -std=c++<span class="hljs-number">11</span> -O2 -W<span class="hljs-literal">all</span> -o b.<span class="hljs-keyword">out</span><br><br><span class="hljs-comment"># 运行 b.out</span><br>./b.<span class="hljs-keyword">out</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="2-生成库文件并编译"><a href="#2-生成库文件并编译" class="headerlink" title="2.生成库文件并编译"></a>2.生成库文件并编译</h3><p>链接<strong>静态库</strong>生成可执行文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># 进入src目录下</span></span><br><span class="hljs-meta">$</span><span class="bash"><span class="hljs-built_in">cd</span> src</span><br><span class="hljs-meta"></span><br><span class="hljs-meta">#</span><span class="bash"> 汇编， 生成Swap.o 文件</span><br>g++ Swap.cpp -c -I../include<br><span class="hljs-meta">#</span><span class="bash"> 生成静态库libSwap.a</span><br>ar rs libSwap.a Swap.o<br><span class="hljs-meta"></span><br><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># 返回上级目录</span></span><br><span class="hljs-meta">$</span><span class="bash"><span class="hljs-built_in">cd</span> ..</span><br><span class="hljs-meta"></span><br><span class="hljs-meta">#</span><span class="bash"> 链接， 生成可执行文件：staticmain</span><br>g++ main.cpp -Iinclude -Lsrc -lSwap -o staticmain<br></code></pre></td></tr></table></figure>
+
+<p>链接<strong>动态库</strong>生成可执行文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># 进入src目录下</span></span><br><span class="hljs-meta">$</span><span class="bash"><span class="hljs-built_in">cd</span> src</span><br><span class="hljs-meta"></span><br><span class="hljs-meta">#</span><span class="bash">生成动态库libSwap.so</span><br>g++ Swap.cpp -I../include -fPIC -shared -o libSwap.so<br><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># 上面的命令等价于以下两条命令</span></span><br><span class="hljs-meta">#</span><span class="bash"> gcc Swap.cpp -I../include -c -fPIC</span><br><span class="hljs-meta">#</span><span class="bash"> gcc -shared -o libswap.so Swap.o</span><br><span class="hljs-meta"></span><br><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># 返回上级目录</span></span><br><span class="hljs-meta">$</span><span class="bash"><span class="hljs-built_in">cd</span> ..</span><br><span class="hljs-meta"></span><br><span class="hljs-meta">#</span><span class="bash"> 链接， 生成可执行文件：sharemain</span><br>g++ mian.cpp -Iinclude -Lsrc -lSwap -o sharedmain<br></code></pre></td></tr></table></figure>
+
+<h2 id="GDB调试"><a href="#GDB调试" class="headerlink" title="GDB调试"></a>GDB调试</h2><p>VSCode也是通过调用GDB调试器来实现C/C++的调试工作的。</p>
+<h2 id="1-常用调试命令参数"><a href="#1-常用调试命令参数" class="headerlink" title="1.常用调试命令参数"></a>1.常用调试命令参数</h2><blockquote>
+<p>Tips:</p>
+</blockquote>
+<ol>
+<li>编译程序时需要加上-g，才能使用gdb调试</li>
+<li>回车键：敲击它重复执行上一次的指令</li>
+</ol>
+<p>调试开始：执行<strong>gdb[exefilename]，进入gdb调试程序</strong>，其中exefilename为要调试的可执行文件名。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment"># 以下命令后括号内为命令的简化使用，比如run(r), 直接输入命令r就代表命令run</span></span><br><span class="hljs-meta"></span><br><span class="hljs-meta">$</span><span class="bash">(gdb)<span class="hljs-built_in">help</span>(h)	<span class="hljs-comment"># 查看帮助命令，具体命令查询在gdb中输入help+命令</span></span><br><span class="hljs-meta"></span><br><span class="hljs-meta">$</span><span class="bash">(gdb)run(r)	<span class="hljs-comment"># 重新开始运行文件(run-text:加载文本文件，run-bin:加载二进制文件)</span></span><br><span class="hljs-meta"></span><br><span class="hljs-meta">$</span><span class="bash">(gdb)start		<span class="hljs-comment"># 单步执行，运行程序，停在第一行执行语句</span></span><br><span class="hljs-meta"></span><br><span class="hljs-meta">$</span><span class="bash">(gdb)list(l)	<span class="hljs-comment"># 查看源代码(list-n，从第n行开始查看代码。list+函数名:查看具体函数)</span></span><br><span class="hljs-meta"></span><br><span class="hljs-meta">$</span><span class="bash">(gdb)<span class="hljs-built_in">set</span>		<span class="hljs-comment"># 设置变量值</span></span><br><span class="hljs-meta"></span><br><span class="hljs-meta">$</span><span class="bash">(gdb)next(n)   <span class="hljs-comment"># 单步调试（逐过程，函数直接执行不跳入函数）</span></span><br><span class="hljs-meta"></span><br><span class="hljs-meta">$</span><span class="bash">(gdb)step(s)	<span class="hljs-comment"># 单步调试（逐语句，跳入自定义函数内部执行）</span></span><br><span class="hljs-meta"></span><br><span class="hljs-meta">$</span><span class="bash">(gdb)info(i)	<span class="hljs-comment"># 查看函数内部局部变量的值</span></span><br><span class="hljs-meta"></span><br><span class="hljs-meta">$</span><span class="bash">(gdb)finish	<span class="hljs-comment"># 结束当前函数，返回到函数调用点</span></span><br><span class="hljs-meta"></span><br><span class="hljs-meta">$</span><span class="bash">(gdb)<span class="hljs-built_in">continue</span>(c)	<span class="hljs-comment"># 继续运行</span></span><br><span class="hljs-meta"></span><br><span class="hljs-meta">$</span><span class="bash">(gdb)<span class="hljs-built_in">print</span>(p)		<span class="hljs-comment"># 打印值及地址 只会打印一遍</span></span><br><span class="hljs-meta"></span><br><span class="hljs-meta">$</span><span class="bash">(gdb)quit(q)		<span class="hljs-comment"># 退出gdb</span></span><br><span class="hljs-meta"></span><br><span class="hljs-meta">$</span><span class="bash">(gdb)<span class="hljs-built_in">break</span>+num(b)   <span class="hljs-comment">#在第num行设置断点</span></span><br><span class="hljs-meta"></span><br><span class="hljs-meta">$</span><span class="bash">(gdb)info breakpoints		<span class="hljs-comment"># 查看当前设置的所有断点</span></span><br><span class="hljs-meta"></span><br><span class="hljs-meta">$</span><span class="bash">(gdb)delete breakpoints num(d)		<span class="hljs-comment"># 删除第num个断点</span></span><br><span class="hljs-meta"></span><br><span class="hljs-meta">$</span><span class="bash">(gdb)display		<span class="hljs-comment"># 追踪查看具体变量值 不同于print打印一次，他是一直显示</span></span><br><span class="hljs-meta"></span><br><span class="hljs-meta">$</span><span class="bash">(gdb)undisplay		<span class="hljs-comment"># 取消追踪观察变量</span></span><br><span class="hljs-meta"></span><br><span class="hljs-meta">$</span><span class="bash">(gdb)<span class="hljs-built_in">enable</span> breakpoints		<span class="hljs-comment"># 启用断点</span></span><br><span class="hljs-meta"></span><br><span class="hljs-meta">$</span><span class="bash">(gdb)<span class="hljs-built_in">disable</span> breakpoints		<span class="hljs-comment"># 禁用断点</span></span><br></code></pre></td></tr></table></figure>
+
+<h2 id="Makefile项目管理"><a href="#Makefile项目管理" class="headerlink" title="Makefile项目管理"></a>Makefile项目管理</h2><ul>
+<li><strong>1个规则：</strong></li>
+</ul>
+<p> 目标：依赖条件</p>
+<p> （一个tab缩进）+命令</p>
+<p><strong>示例：</strong></p>
+<p>一个以 hello.c 为例子的 Makefile，未学习Makefile前我们使用 gcc hello.c -o hello</p>
+<p>现在根据一个规则 建立一个简单的Makefile</p>
+<figure class="highlight vala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs vala"><span class="hljs-meta"># 目标：依赖条件</span><br><br><span class="hljs-meta">#		（一个tab缩进）+命令</span><br>hello:hello.c<br>	gcc hello.c -o hello<br></code></pre></td></tr></table></figure>
+
+<p>ALL: 指定Makefile的终极任务目标。</p>
+<ul>
+<li><strong>2个函数</strong></li>
+</ul>
+<p>src = $(wildcard *.c) ：找到当前目录下所有后缀为 .c 的文件，赋值给src</p>
+<blockquote>
+<p>tips: 上面这个脚本命令 相当于函数调用  wildcard是函数名  *.c是参数  src接收调用完wildcard函数产生的返回值  $(变量) 取变量值</p>
+</blockquote>
+<p>obj = $(patsubst %.c, %.o, $(src))：把src变量里所有后缀为 .c 的文件替换为 .o</p>
+<figure class="highlight haml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs haml">clean：（没有依赖项）<br><br>		-<span class="ruby">rm -rf  <span class="hljs-variable">$(</span>obj) a.out             <span class="hljs-string">&quot;-&quot;</span>: 作用，删除不存在文件时，不报错。顺序执行结束。</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>3个自动变量</strong></li>
+</ul>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs elixir"><span class="hljs-variable">$@</span><span class="hljs-symbol">:</span>在规则的命令中，表示规则中的目标。<br><span class="hljs-variable">$^</span><span class="hljs-symbol">:</span>在规则的命令中，表示所有依赖条件。<br><span class="hljs-variable">$&lt;</span><span class="hljs-symbol">:</span>在规则的命令中，表示第一个依赖条件。如果将该变量应用在模式规则中，它可以将依赖条件列表中的依赖项依次取出，套用模式规则。<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><p><strong>模式规则：</strong></p>
+<p>%.o:%.c</p>
+<p>​        <code>gcc -c $&lt; -o $@</code></p>
+</li>
+<li><p><strong>静态模式规则(指定 .o 文件来源)：</strong></p>
+<p>$(obj):%.o:%.c</p>
+<p>​        <code>gcc -c $&lt; -o $@</code></p>
+</li>
+<li><p><strong>伪目标：</strong></p>
+<p><strong>.PHONY: clean ALL</strong></p>
+</li>
+</ul>
+<blockquote>
+<p>makefile样例：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs Makefile">src = <span class="hljs-variable">$(<span class="hljs-built_in">wildcard</span> *.c)</span><br>obj = <span class="hljs-variable">$(<span class="hljs-built_in">patsubst</span> %.c, %.o, <span class="hljs-variable">$(src)</span>)</span><br><br>myWarning = -Wall -g   <span class="hljs-comment"># 添加警告和调试参数</span><br><br><span class="hljs-section">ALL:a.out</span><br><span class="hljs-section">a.out: <span class="hljs-variable">$(obj)</span></span><br>	gcc <span class="hljs-variable">$^</span> -o <span class="hljs-variable">$@</span> <span class="hljs-variable">$(myWarning)</span><br><span class="hljs-variable">$(obj)</span>:%.o:%.c<br>	gcc -c <span class="hljs-variable">$&lt;</span> -o <span class="hljs-variable">$@</span> <span class="hljs-variable">$(myWarning)</span><br><span class="hljs-section">clean:</span><br>	-rm -rf <span class="hljs-variable">$(obj)</span> a.out<br><span class="hljs-meta"><span class="hljs-meta-keyword">.PHONY</span>: clean ALL</span><br></code></pre></td></tr></table></figure>
+</blockquote>
+<h2 id="CMake-tutorial"><a href="#CMake-tutorial" class="headerlink" title="CMake tutorial"></a>CMake tutorial</h2><h2 id="1-语法特性"><a href="#1-语法特性" class="headerlink" title="1.语法特性"></a>1.语法特性</h2><ul>
+<li><strong>基本语法格式：指令(参数1 参数2….)</strong> 参数之间使用<strong>空格</strong>或<strong>分号</strong>分开</li>
+<li><strong>指令是大小写无关的，参数和变量是大小写相关的</strong> <strong>set</strong>(HELLO hello.cpp) <strong>add_executable</strong>(hello main.cpp hello.cpp) <strong>ADD_EXECUTABLE</strong>(hello main.cpp ${HELLO})</li>
+<li><strong>变量使用${}方式取值，但是在IF控制语句中是直接使用变量名的</strong></li>
+</ul>
+<h2 id="2-重要指令和CMake常用变量"><a href="#2-重要指令和CMake常用变量" class="headerlink" title="2.重要指令和CMake常用变量"></a>2.重要指令和CMake常用变量</h2><h3 id="2-1重要指令"><a href="#2-1重要指令" class="headerlink" title="2.1重要指令"></a>2.1重要指令</h3><p>ps：下面的中括号是可选项的意思</p>
+<ul>
+<li><strong>cmake_minimum_required</strong> - <strong>指定CMake的最小版本要求</strong></li>
+<li>语法：cmake_minimum_required(VERSION versionNumber)</li>
+</ul>
+<p><em>#CMake最小版本要求为2.8.3</em>  <strong>cmake_minimum_required</strong>(VERSION 2.8.3)</p>
+<ul>
+<li><strong>project</strong> - <strong>定义工程名称， 并指定工程支持的语言</strong></li>
+<li>语法：<strong>project(projectname [CXX] [C] [Java])</strong></li>
+</ul>
+<p><em># 指定工程名为HELLOWORLD</em> <strong>project</strong>(HELLOWORLD)</p>
+<ul>
+<li><strong>set</strong> - <strong>显示的定义变量</strong></li>
+<li>语法：<strong>set(VAR[VALUE] [CACHE TYPE DOCSTRING [FORCE]])</strong></li>
+</ul>
+<p><em># 定义SRC变量，</em> <em>其值为main.cpp hello.cpp</em> <strong>set</strong>(SRC sayhello.cpp hello.cpp)</p>
+<ul>
+<li><strong>include_directories</strong> - **向工程添加多个特定的头文件搜索路径 **—–&gt; 相当于指定g++编译器的 -i 参数</li>
+<li>语法：<strong>include_directories([AFTER|BEFORE] [SYSTEM] dir1 dir2….)</strong></li>
+</ul>
+<p><em># 将/usr/include/myincludefolder 和 ./include 添加到头文件搜索路径</em> <strong>include_directories</strong>(/usr/<strong>include</strong>/myincludefolder ./<strong>include</strong>)</p>
+<ul>
+<li><strong>link_directories</strong>- <strong>向工程添加多个特定的库文件搜索路径</strong>—–&gt; 相当于指定g++编译器的-L参数</li>
+<li>语法：<strong>link_directories(dir1 dir2……)</strong></li>
+</ul>
+<p><em># 将/usr/lib/mylibfolder 和 ./lib 添加到库文件搜索路径</em> <strong>link_directories</strong>(/usr/lib/mylibfolder ./lib)</p>
+<ul>
+<li><strong>add_library</strong> - <strong>生成库文件</strong></li>
+<li>语法：<strong>add_library(libname [SHARED|STATIC|MODULE] [EXCLUDE_FROM_ALL] source1 source2……sourceN)</strong></li>
+</ul>
+<p><em># 通过变量SRC 生成 libhello.so 共享库</em> <strong>add_library</strong>(hello SHARED ${SRC})</p>
+<ul>
+<li><strong>add_compile_options</strong>- <strong>添加编译参数</strong></li>
+<li>语法：<strong>add_compile_options(<option>…)</strong></li>
+</ul>
+<p><em># 添加编译参数 -wall -std=c++11</em> <strong>add_compile_options</strong>(-wall -std=c++11 -o2)</p>
+<ul>
+<li><strong>add_executalbe</strong> - <strong>生成可执行文件</strong></li>
+<li>语法：<strong>add_executalbe(exename source1 source2 … sourceN)</strong></li>
+</ul>
+<p><em># 编译main.cpp生成可执行文件main</em> add_executalbe(main main.cpp)</p>
+<ul>
+<li><strong>target_link_libraries</strong> **- 为target添加需要链接的共享库 **—-&gt; 相同于指定g++编译器 -l 参数</li>
+<li>语法：<strong>add_link_libraries(target library1&lt;debug | optimized&gt;library2…)</strong></li>
+</ul>
+<p># 将hello动态库文件链接到可执行文件main target_link_libraries(main hello)</p>
+<ul>
+<li><strong>add_subdirectory</strong> - <strong>向当前工程添加存放源文件的子目录，并可以指定中间二进制和目标二进制存放的位置</strong></li>
+<li>语法：<strong>add_subdirectory(source_dir [binary_dir] [EXCLUDE_FROM_ALL])</strong></li>
+</ul>
+<p><em># 添加src子目录， src中需要有一个CMakeList.txt</em> <strong>add_subdirectory</strong>(src)</p>
+<ul>
+<li><strong>aux_source_directory</strong> - <strong>发现一个目录下所有的源代码文件并将列表存储在一个变量中，这个指令临时被用来自动构建源文件列表</strong></li>
+<li>语法：<strong>aux_source_directory (dir VARIABLE)</strong></li>
+</ul>
+<p><em># 定义SRC变量，</em> <em>其值为当前目录下所有的源代码文件</em> <strong>aux_source_directory</strong>(. SRC) <em># 编译SRC变量所代表的源代码文件，生成main可执行文件</em> add_executalbe(main ${SRC})</p>
+<h3 id="2-2CMake常用变量"><a href="#2-2CMake常用变量" class="headerlink" title="2.2CMake常用变量"></a>2.2CMake常用变量</h3><ul>
+<li>**CMAKE_C_FLAGS ** <strong>gcc编译选项</strong></li>
+<li><strong>CMAKE_CXX_FLAGS</strong> <strong>g++编译选项</strong> <strong>#</strong> 在CMAKE_CXX_FLAGS编译选项后追加 -std=c++11 set(CMAKE_CXX_FLAGS “${CMAKE_CXX_FLAGS} -std=c++11”)</li>
+<li><strong>CMAKE_BUILD_TYPE</strong> <strong>编译类型(Debug, Release)</strong> <em># 设定编译类型为debug，</em> <em>调试时需要选择debug</em> set(CMAKE_BUILD_TYPE Debug) <em># 设定编译类型为release，</em> <em>发布时需要选择release</em> set(CMAKE_BUILD_TYPE Release)</li>
+</ul>
+<h2 id="3-CMake编译工程"><a href="#3-CMake编译工程" class="headerlink" title="3.CMake编译工程"></a>3.CMake编译工程</h2><p>CMake目录结构：项目主目录存在一个CMakeList.txt文件</p>
+<p><strong>两种方式设置编译规则：</strong></p>
+<p>1.包含源文件的子文件夹<strong>包含</strong>CMakeLI.txt文件，主目录的CMakeList.txt通过add_subdirctory添加子目录即可；</p>
+<p>2.包含源文件的子文件夹<strong>未包含</strong>CMakeLI.txt文件,子目录编译规则体现在主目录的CMakeList.txt中；</p>
+<h3 id="3-1编译流程"><a href="#3-1编译流程" class="headerlink" title="3.1编译流程"></a>3.1编译流程</h3><p><strong>在linux平台下使用CMake构建C/C++工程的流程如下：</strong></p>
+<ul>
+<li>手动编写CMakeList.txt.</li>
+<li>执行命令cmake PATH生成Makefile（PATH是顶层CMakeList.txt所在的目录）。</li>
+<li>执行命令make进行编译</li>
+</ul>
+<h3 id="3-2两种构建方式"><a href="#3-2两种构建方式" class="headerlink" title="3.2两种构建方式"></a>3.2两种构建方式</h3><ul>
+<li>内部构建(in-source build): 不推荐使用 内部构建会在同级目录下产生大量中间文件，这些中间文件并不是我们所需要的，和工程源文件放在一起会显得杂乱。 <em>## 内部构建</em> <em># 在当前目录下，编译本目录的CMakeList.txt，</em> <em>生成Makefile和其他文件</em> cmake . <em># 执行make命令，生成target</em> make</li>
+<li>外部构建(out-of-source build): 推荐使用 将编译输出文件与源文件放到不同目录中 <em>## 外部构建</em> <em># 1. 在当前目录下，创建build文件夹</em> mkdir build <em># 2. 进入到build文件夹</em> cd build <em># 3. 编译上级目录的CMakeList.txt, 生成Makefi和其他文件</em> cmake .. <em># 4. 执行make命令，生成target</em> make</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <div>
+        
+          <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+        
+      </div>
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C-C/" rel="tag"><i class="fa fa-tag"></i>C/C++</a>
+              <a href="/tags/Makefile/" rel="tag"><i class="fa fa-tag"></i>Makefile</a>
+              <a href="/tags/CMake/" rel="tag"><i class="fa fa-tag"></i>CMake</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/05/15/%E7%B3%BB%E7%BB%9F%E7%BC%96%E7%A8%8B6-%E7%AE%A1%E9%81%93/" rel="prev" title="系统编程6-管道">
+      <i class="fa fa-chevron-left"></i> 系统编程6-管道
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/05/16/Linux-%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4/" rel="next" title="Linux-基本命令">
+      Linux-基本命令 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#GCC-compile-tutorial"><span class="nav-number">1.</span> <span class="nav-text">GCC compile tutorial</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">1.编译过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-g-%E9%87%8D%E8%A6%81%E7%BC%96%E8%AF%91%E5%8F%82%E6%95%B0"><span class="nav-number">3.</span> <span class="nav-text">2.g++重要编译参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Exercise"><span class="nav-number">4.</span> <span class="nav-text">3.Exercise</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E7%9B%B4%E6%8E%A5%E7%BC%96%E8%AF%91"><span class="nav-number">4.1.</span> <span class="nav-text">1.直接编译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%94%9F%E6%88%90%E5%BA%93%E6%96%87%E4%BB%B6%E5%B9%B6%E7%BC%96%E8%AF%91"><span class="nav-number">4.2.</span> <span class="nav-text">2.生成库文件并编译</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GDB%E8%B0%83%E8%AF%95"><span class="nav-number">5.</span> <span class="nav-text">GDB调试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%B8%B8%E7%94%A8%E8%B0%83%E8%AF%95%E5%91%BD%E4%BB%A4%E5%8F%82%E6%95%B0"><span class="nav-number">6.</span> <span class="nav-text">1.常用调试命令参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Makefile%E9%A1%B9%E7%9B%AE%E7%AE%A1%E7%90%86"><span class="nav-number">7.</span> <span class="nav-text">Makefile项目管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CMake-tutorial"><span class="nav-number">8.</span> <span class="nav-text">CMake tutorial</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E8%AF%AD%E6%B3%95%E7%89%B9%E6%80%A7"><span class="nav-number">9.</span> <span class="nav-text">1.语法特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E9%87%8D%E8%A6%81%E6%8C%87%E4%BB%A4%E5%92%8CCMake%E5%B8%B8%E7%94%A8%E5%8F%98%E9%87%8F"><span class="nav-number">10.</span> <span class="nav-text">2.重要指令和CMake常用变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1%E9%87%8D%E8%A6%81%E6%8C%87%E4%BB%A4"><span class="nav-number">10.1.</span> <span class="nav-text">2.1重要指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2CMake%E5%B8%B8%E7%94%A8%E5%8F%98%E9%87%8F"><span class="nav-number">10.2.</span> <span class="nav-text">2.2CMake常用变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-CMake%E7%BC%96%E8%AF%91%E5%B7%A5%E7%A8%8B"><span class="nav-number">11.</span> <span class="nav-text">3.CMake编译工程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1%E7%BC%96%E8%AF%91%E6%B5%81%E7%A8%8B"><span class="nav-number">11.1.</span> <span class="nav-text">3.1编译流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2%E4%B8%A4%E7%A7%8D%E6%9E%84%E5%BB%BA%E6%96%B9%E5%BC%8F"><span class="nav-number">11.2.</span> <span class="nav-text">3.2两种构建方式</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XuZhang"
+      src="/images/author.jpg">
+  <p class="site-author-name" itemprop="name">XuZhang</p>
+  <div class="site-description" itemprop="description">海阔凭鱼跃，天高任鸟飞</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/xuzhang1108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;xuzhang1108" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/bu-ke-zhi-wei-zhi" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;bu-ke-zhi-wei-zhi" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>知乎</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xuzhang</span>
+</div>
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+		Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+		year - 作为date对象的年份，为4位年份值
+		month - 0-11之间的整数，做为date对象的月份
+		day - 1-31之间的整数，做为date对象的天数
+		hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+		minutes - 0-59之间的整数，做为date对象的分钟数
+		seconds - 0-59之间的整数，做为date对象的秒数
+		microseconds - 0-999之间的整数，做为date对象的毫秒数
+        */
+		var t1 = Date.UTC(2021,05,14,12,00,00); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+-->
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/images/manifest.json">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuzhang1108.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一.命令行1.ctrl + D 退出 当进入Python时 ctrl + D相当与quit() 同时它也可以直接退出命令行终端 2.ctrl ++ 和ctrl -对终端的字体大小进行调整 3.命令提示符（shell prompt）“username@machinename” 后面跟上当前工作目录如图 1peter@dog ~ $  ~表示当前用户的主目录( home )，对于Peter来说这个位置">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux-基本命令">
+<meta property="og:url" content="http://xuzhang1108.github.io/2021/05/16/Linux-%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4/index.html">
+<meta property="og:site_name" content="XuZhang&#96;s blog">
+<meta property="og:description" content="一.命令行1.ctrl + D 退出 当进入Python时 ctrl + D相当与quit() 同时它也可以直接退出命令行终端 2.ctrl ++ 和ctrl -对终端的字体大小进行调整 3.命令提示符（shell prompt）“username@machinename” 后面跟上当前工作目录如图 1peter@dog ~ $  ~表示当前用户的主目录( home )，对于Peter来说这个位置">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-05-16T10:43:44.000Z">
+<meta property="article:modified_time" content="2021-05-16T10:49:54.359Z">
+<meta property="article:author" content="XuZhang">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://xuzhang1108.github.io/2021/05/16/Linux-%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Linux-基本命令 | XuZhang`s blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XuZhang`s blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录学习的点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">8</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuzhang1108.github.io/2021/05/16/Linux-%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/author.jpg">
+      <meta itemprop="name" content="XuZhang">
+      <meta itemprop="description" content="海阔凭鱼跃，天高任鸟飞">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XuZhang`s blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux-基本命令
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-05-16 18:43:44 / 修改时间：18:49:54" itemprop="dateCreated datePublished" datetime="2021-05-16T18:43:44+08:00">2021-05-16</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="一-命令行"><a href="#一-命令行" class="headerlink" title="一.命令行"></a><strong>一.命令行</strong></h1><p>1.ctrl + D 退出 当进入Python时 ctrl + D相当与quit() 同时它也可以直接退出命令行终端</p>
+<p>2.ctrl ++ 和ctrl -对终端的字体大小进行调整</p>
+<p>3.命令提示符（shell prompt）“<strong>username</strong>@<strong>machinename”</strong> 后面跟上当前工作目录如图</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">peter@dog ~ $<br></code></pre></td></tr></table></figure>
+
+<p>~表示当前用户的主目录( home )，对于Peter来说这个位置就是==/home/peter==.后面的美元符号告诉我们可以开始输入命令了 ，随便输入会报错“command not found”.==合法的命令有三部分组成，命令本身，命令参数，操作对象==，例如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> ls</span><br><span class="hljs-meta">$</span><span class="bash"> mkdir ttt</span><br><span class="hljs-meta">$</span><span class="bash"> rm - r ttt</span><br></code></pre></td></tr></table></figure>
+
+<p>使用<strong>manpage</strong>手册可以帮助查看命令的使用方式，例如<strong>rm</strong>命令的文档查看</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">man rm<br></code></pre></td></tr></table></figure>
+
+<p>然后敲击/-r就可以查找-r这个参数的意义了，查找下一处，敲n，==退出敲q==。</p>
+<p>4.超级管理员权限</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo su  //进入超级管理员<br>exit   //退出超级管理员<br></code></pre></td></tr></table></figure>
+
+<h1 id="二-文件系统结构"><a href="#二-文件系统结构" class="headerlink" title="二.文件系统结构"></a><strong>二.文件系统结构</strong></h1><p>linux的硬盘分区（partition）不像Windows中分为C:，D:盘，而是叫sda1，sda2。linux下文件夹（folder）叫做目录（dictionary）。与windows每个磁盘分区是一棵树不同的是，linux的文件系统只有一棵树。树的顶端是一个目录（名字叫==/==）。</p>
+<p>显示当前工作目录pwd（print working directory,打印当前目录）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">pwd</span></span><br>/home/peter/<br></code></pre></td></tr></table></figure>
+
+<p><strong>绝对路径和相对路径</strong></p>
+<p>绝对路径：从根目录开始到达目的地，例如：**==/usr/bin==** 从/根目录开始到达bin这个子目录。</p>
+<p>相对路径：从工作目录开始。文件系统使用几个特殊的符号来表示文件系统中的相对位置。这些特殊符号为**.** 和 **..**。一个点表示当前工作目录，两个点表示当前工作目录的父目录。</p>
+<p>绝对路劲以 <strong>==/==</strong> <strong>开</strong>头的路径，例如**==/home/peter==<strong>。相对路径以点开头可以两点或一个点，但是一个点的情况下可以省略，例如，</strong>==./peter==<strong>可以写成</strong>==peter==**。两个点 <strong>==../zhang==</strong></p>
+<p><strong>更改当前工作目录（cd: change dir）</strong></p>
+<p>使用方法：输入cd后，其后跟所期望的工作目录。路径名就是我们沿着目录树枝干到达 我们所要目录所经过的路线。==路径名可以用两种方式来指定==，一个是绝对路径名， 另一个是相对路径名。</p>
+<p>例如我们的当前位置是**==/home/peter/==<strong>, 我们想把当前工作路径改为</strong>==/home/peter/docs==**就可以使用两种方式。如下：</p>
+<p>指定绝对路径：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">cd</span> /home/peter/docs</span><br><span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">pwd</span></span><br>/home/peter/docs<br></code></pre></td></tr></table></figure>
+
+<p>指定相对路径：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">cd</span> ./docs/</span> <br><span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">pwd</span></span>  <br>/home/peter/docs             <br></code></pre></td></tr></table></figure>
+
+<p> 切换到根目录命令为：<strong>cd /</strong>   （**/ 可以省略**）</p>
+<h1 id="三-日常文件操作"><a href="#三-日常文件操作" class="headerlink" title="三.日常文件操作"></a><strong>三.日常文件操作</strong></h1><p><strong>文件及目录基本操作</strong></p>
+<p>复制文件目录</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> cp -r dir1 dir2</span><br><span class="hljs-meta">$</span><span class="bash"> cp file1 file2</span><br></code></pre></td></tr></table></figure>
+
+<p>移动文件目录</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> mv dir1 Desktop/dir1</span><br></code></pre></td></tr></table></figure>
+
+<p>重命名文件目录</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> mv file1 file2</span><br><span class="hljs-meta">$</span><span class="bash"> mv dir1 dir2</span><br></code></pre></td></tr></table></figure>
+
+<p>删除文件目录</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> cp -r dir1 dir2</span><br><span class="hljs-meta">$</span><span class="bash"> cp file1 file2</span><br></code></pre></td></tr></table></figure>
+
+<p>创建文件目录</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> mkdir dir</span><br><span class="hljs-meta">$</span><span class="bash"> touch file</span><br><span class="hljs-meta">$</span><span class="bash"> &gt;file</span><br><span class="hljs-meta">$</span><span class="bash"> vim file</span><br></code></pre></td></tr></table></figure>
+
+<p>查看文件内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> cat file <span class="hljs-comment">#适合比较短的文件</span></span><br><span class="hljs-meta">$</span><span class="bash"> less file <span class="hljs-comment"># 有快捷键，可以查看比较长的文件</span></span>                        <br></code></pre></td></tr></table></figure>
+
+<p>查看文件类型file</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> file file1</span><br><span class="hljs-meta">$</span><span class="bash"> file dir1</span><br></code></pre></td></tr></table></figure>
+
+<p>查看文件大小</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> du -k file</span><br><span class="hljs-meta">$</span><span class="bash"> du -m file</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>通配符的使用</strong></p>
+<p>通配符 * 的使用几个实例，如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> ls</span><br>a.txt b.txt ccc.txt a.html hello.html<br></code></pre></td></tr></table></figure>
+
+<p>要删除所有的文件，就用**rm *<strong>，可以使用</strong>echo ***查看 ***** 到底代表哪些文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">echo</span> *.txt</span><br><span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">echo</span> a*</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>文件打包</strong></p>
+<p>例子一，解压zip压缩包和压缩zip包</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> unzip x.zip</span><br><span class="hljs-meta">$</span><span class="bash"> zip -r x.zip x/</span><br></code></pre></td></tr></table></figure>
+
+<p>例子二，解压tar.gz包和压缩tar.gz包</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> tar zxvf xxx.tar.gz</span><br><span class="hljs-meta">$</span><span class="bash"> tar zcvf xxx.tar.gz xx/</span><br></code></pre></td></tr></table></figure>
+
+<p>例子三，解压tar.bz2和压缩tar.bz2</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> tar jxvf xxx.tar.bz2</span><br><span class="hljs-meta">$</span><span class="bash"> tar jcvf xxx.tar.bz2 xxx/</span><br></code></pre></td></tr></table></figure>
+
+
+
+<h1 id="四-重定向"><a href="#四-重定向" class="headerlink" title="四.重定向"></a><strong>四.重定向</strong></h1><p>开发中经常会用到 grep 命令来进行字符串查找，比如我们来找一下 /bin 目录下的所有可执行的程序中，有那些是包含 less 字样的</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> ls /bin|grep less</span><br></code></pre></td></tr></table></figure>
+
+
+
+<h1 id="五-权限"><a href="#五-权限" class="headerlink" title="五.权限"></a><strong>五.权限</strong></h1><p>有一个概念必须明确：粗略的，用户在自己主目录下会拥有写权限，主目录之外一般只有读权限。如果我们到我们自己的主目录之外</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">cd</span> /</span><br><span class="hljs-meta">$</span><span class="bash"> touch aaa</span><br></code></pre></td></tr></table></figure>
+
+
+
+<p>就会报错“Permission denied”。解决它的办法，就是变身为管理员或者叫做超级用户。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs elixir"><span class="hljs-variable">$ </span>sudo touch aaa<br></code></pre></td></tr></table></figure>
+
+
+
+<p>输入peter的密码就可以作为超级用户来执行这个操作了。实际中常见的例子就是我们用apt-get安装一个软件的时候，一般会涉及到往我们主目录之外的地方安装文件，所以要用sudo的，例如</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> sudo apt-get install vim</span><br></code></pre></td></tr></table></figure>
+
+
+
+<p>但我们有时候会发现这个规则不是铁定的，比如我的主目录下有一个文件a.txt 现在我想修改他</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">echo</span> Hello &gt;a.txt</span><br></code></pre></td></tr></table></figure>
+
+<p>也会报出权限拒绝的错误。权限问题还有深层原理。</p>
+<p><strong>三种权限</strong></p>
+<p>用户对文件通常会涉及读，写，执行三种权限，linux还有其他权限，但不常用。</p>
+<p>Linux是一个多用户的操作系统，就是说很多用户可能同时使用一个计算机。对于一个特定的文件，系统会为他指定一个特定的用户（user）作为他的所有者<strong>（==ower==）</strong>。同时还会指定一个由一人或多人组成的组（**==group==）<strong>，作为这个文件的所有者组（owner group），这两类之外的其他用户归为第三类人，叫</strong>==world==。**这三类人各自的权限多少可以任意指定，不一定谁多谁少，当然一般来说owenr的权限会多一些。</p>
+<p><strong>文件模式（file mode）</strong></p>
+<p>文件权限的规定是通过文件模式（file mode）来控制的。如果我们执行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> ls -l a.txt</span><br>-rw-rw-r-- 1 peter peter 0 Aug 30 11:57 a.txt<br></code></pre></td></tr></table></figure>
+
+<p>得到的输出中，第一个 - 是关于文件类型的，这一位常见的情况有，l表示符号链接，如果我们查看的是一个目录，那这里就会显示d，-表示普通文件。</p>
+<p>我们先跳过后面的9个字符，接下来的这个1 表示的是硬链接( hard link )的数目。前后两个 peter 分别代表拥有者( owner )名和组( group )名。0是文件大小，以字节为单位，这里明显是个空文件。接下来是“最后修改时间”。</p>
+<p>剩下的9位就是文件模式，分成三个三个一组，横杆表示没有此权限，r表示有读的权限，w有写的权限，x有执行的权限。</p>
+<p>对目录（directroy）查看权限，要用                     </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> ls -ld mydir</span> <br>drwxrwxr-x 2 peter peter 4096 Aug 30 15:45 mydir/<br></code></pre></td></tr></table></figure>
+
+<p>对于没有执行权限的目录，我们不能跳转进去，所以我们没有执行的权限，意味着我们不可以使用cd命令。</p>
+<p><strong>修改文件模式（chmod）</strong></p>
+<p>我们可以通过 chmod 这个命令来更改文件模式，也就是更改各类用户的具体权限。如果我们想对“其他”用户，在</p>
+<p>a.txt都上写的权限，那么可以凭空想象出这样一个命令。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">chmod rw-rw-rw- a.txt<br></code></pre></td></tr></table></figure>
+
+<p>这样操作系统是不认可的。我们可以用零和一来表示，1代表“使能”，0代表“禁止”，可以得到</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">chmod 110110110 a.txt<br></code></pre></td></tr></table></figure>
+
+<p>那这个逻辑也是清晰的，但是很不幸110110110也不是 chmod 的合法参数。 我们再把这个参数写的短一点，也就是把它们分三组分别用二进制表示。最后得到的</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">chmod 666 a.txt<br></code></pre></td></tr></table></figure>
+
+<p>这是一个正确的系统命令，最后我们可以实现我们的目的了。</p>
+<p>除了可以用二进制来修改文件模式，也可以用英文字符作为参数的形式，例如实际中使用chmod命令最多的一种情形就是给我自己写的脚本加一个可执行权限：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> vim peter.sh</span><br><span class="hljs-meta">$</span><span class="bash"> ./peter.sh</span><br>Permission denied<br><span class="hljs-meta">$</span><span class="bash"> chmod +x peter.sh</span><br><span class="hljs-meta">$</span><span class="bash"> ./peter.sh</span><br>hello world<br></code></pre></td></tr></table></figure>
+
+<p>要去除刚刚加上的执行权限，可以</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> chmod -x peter.sh</span><br></code></pre></td></tr></table></figure>
+
+<p>其他的形式还有许多：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> chmod +w file</span><br><span class="hljs-meta">$</span><span class="bash"> chmod -w file</span><br><span class="hljs-meta">$</span><span class="bash"> chmod a+x file</span><br><span class="hljs-meta">$</span><span class="bash"> chmod u+x file</span><br></code></pre></td></tr></table></figure>
+
+
+
+<h1 id="六-进程"><a href="#六-进程" class="headerlink" title="六.进程"></a><strong>六.进程</strong></h1><p>每当我们启动一个程序，系统就会对应启动一个进程。</p>
+<p><strong>获取进程号</strong></p>
+<p>查看系统当前所有的进程，要加上aux参数，注意没有-。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> ps aux</span><br></code></pre></td></tr></table></figure>
+
+<p>内容不少，可以用less来做分页器，从头查看.  ==|代表管道==</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> ps aux|less</span><br></code></pre></td></tr></table></figure>
+
+<p>![](C:\Users\Xu Zhang\Pictures\Saved Pictures\Screenshot from 2021-01-01 19-57-18.png)</p>
+<p>这样我们看到，第一个字段 USER 代表是哪个用户执行的这个进程，第二个 PID （ Porcess ID ）就是我们要的进程号了。其他那些内容我不太关心.</p>
+<p>敲**==/vim==** 可以查找到我们想要的 vim 这个进程。</p>
+<p>当你知道那一部分代表进程号之后，后面一般用管道线加 grep 来进行查找         </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> ps aux|grep vim</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>杀死进程</strong></p>
+<p>拿到进程号（双击进程号选中，ctrl-shift-c 复制，ctrl-shift-v 粘贴），我们就可以对这个进程进行 操作了，比如可以结束这个进程</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">kill 2345<br></code></pre></td></tr></table></figure>
+
+<p><strong>top命令类似与windows里的任务管理器</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">top<br></code></pre></td></tr></table></figure>
+
+<h1 id="七-查找"><a href="#七-查找" class="headerlink" title="七.查找"></a><strong>七.查找</strong></h1><p>作为开发者，每天都在敲敲打打一些文件。在代码编辑器里经常涉及查找文件和字符串的操作，这里看看如何在命令行里实现。</p>
+<p>这里主要集中在三个命令上：locate：在全系统范围内定位文件, find：在一个目录内定位文件, grep：查找一个字符串。$</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> locate pattern</span><br></code></pre></td></tr></table></figure>
+
+<p>这样会找到系统上的任何路径中包含 pattern 的文件和目录，用通配符表示就是 <em>pattern</em> ( pattern 前后可以有0个或是多个任意字符)。</p>
+<p>这里有个目录mydir，里面的情况是</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> ls</span><br>a.txt<br>a.c<br>b.txt<br>subdir/<br></code></pre></td></tr></table></figure>
+
+<p>在当前目录找到文件后缀为 .txt 的文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">cd</span> mydir</span><br><span class="hljs-meta">$</span><span class="bash"> find .|grep .txt</span><br></code></pre></td></tr></table></figure>
+
+<p>还可以指定文件类型来进行筛选     </p>
+<h1 id="八-网络操作"><a href="#八-网络操作" class="headerlink" title="八.网络操作"></a><strong>八.网络操作</strong></h1><p><strong>查看网络设置</strong></p>
+<p>直接输入ifconfig即可查看网络IP，网关和子网掩码。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> ifconfig</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>设置网卡参数</strong></p>
+<p>设置IP地址和子网掩码</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> ifconfig eth0 192.168.0.1 netmask 255.255.255.0</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>ping</strong></p>
+<p>利用ping命令可以检查网络是否可以连通，用好它可以很好地帮助我们分析判定网络故障. 检查192.168.0.1是否可以连通。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> ping 192.168.0.1</span><br></code></pre></td></tr></table></figure>
+
+<p>检查当前网络是否连通外网</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> ping www.baidu.com</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>netstat</strong></p>
+<p>netstat是一个监控TCP/IP网络的工具，他可以显示路由表，实际的网络连接以及么一个网络接口设备的状态信息。Netstat用于显示与IP、TCP、UDP和ICMP协议相关的统计数据，一般用于检验本机各端口的网络连接情况。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> netstat -a    //显示所有的socket</span><br><span class="hljs-meta">$</span><span class="bash"> netstat | grep <span class="hljs-string">&quot;5789&quot;</span>  //查看5789端口的连接</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>ssh远程操作</strong></p>
+<p>首先 ssh 是网络上两台机器互联的一套协议，默认走 22 端口，就跟 http 类似， http 默认走 80 端口。 22 端口开了，我们的通道就有了，但是还是要求，请求这一方要安装 ssh client，被访问的这一边要安装 ssh server 。</p>
+<p>![](C:\Users\Xu Zhang\Pictures\Saved Pictures\Screenshot from 2021-01-01 20-19-42.png)</p>
+<p>ubuntu的desktop版，默认安装了ssh客户端，也就是我们可以访问他人。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> ssh peter@haoduoshipin.com</span><br></code></pre></td></tr></table></figure>
+
+<p>如果本地用户，和远端服务器上用户同名，这里的 peter 也可以省略。另外，haoduoshipin.com 的机器是我在 Linode 上申请的一台 VPS 。上面我装了 ubuntu 12.04 的 server 版，默认是有 ssh 的服务器端的，所以我们才可以访问它。</p>
+<p>每次都要输入密码挺讨厌的，可以通过添加 ssh key 的方式解决。首先在我自己的机器上</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> ssh-keygen</span> <br></code></pre></td></tr></table></figure>
+
+<p>会出现问题，但直接回车去默认值就可以了。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">cd</span> ~/.ssh</span><br><span class="hljs-meta">$</span><span class="bash"> ls</span><br>id_rsa id_rsa.pub<br></code></pre></td></tr></table></figure>
+
+<p>id_rsa 是 private key 这个是要严格保密的，id_rsa.pub 这个上传到服务器的指定位置上。</p>
+<h1 id="九-安装软件"><a href="#九-安装软件" class="headerlink" title="九.安装软件"></a><strong>九.安装软件</strong></h1><p>安装软件在 ubuntu 系统上主要有三种方式：</p>
+<ul>
+<li>手动下载源码或者编译好的软件安装</li>
+<li><strong>下载 deb 包来安装</strong></li>
+<li><strong>从 ubuntu 官方的仓库，用 apt-get 下载安装</strong></li>
+</ul>
+<p><strong>tar.gz包安装</strong></p>
+<ol>
+<li>解压tar.gz包 tar -zxvf examle-1.2.3-1.tar.gz</li>
+<li>进入到解压后的目录： cd example-1.2.3-1</li>
+<li>再次执行</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> ./configure</span><br><span class="hljs-meta">$</span><span class="bash"> make</span><br><span class="hljs-meta">$</span><span class="bash"> make install</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>deb包安装</strong></p>
+<p>为啥叫 deb ？ 因为 ubuntu 是 debian 系统的一个变体。一个deb包中会包含下面这些信息。</p>
+<p>![](C:\Users\Xu Zhang\Pictures\Saved Pictures\Screenshot from 2021-01-01 20-31-55.png)</p>
+<p>下载完deb包后，通过如下指令安装</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> dpkg -i 安装包的名字</span><br></code></pre></td></tr></table></figure>
+
+<p>查看系统已安装的包</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash">dpkg -l</span><br></code></pre></td></tr></table></figure>
+
+<p>搜索chrome包</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash">dpkg -l|grep chrome</span><br></code></pre></td></tr></table></figure>
+
+<p>查看这个包安装了哪些文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> dpkg -L packagename</span><br></code></pre></td></tr></table></figure>
+
+<p>查看某个特定文件来自哪个安装包</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> dpkg -S /usr/bin/git</span><br></code></pre></td></tr></table></figure>
+
+
+
+<p><strong>软件apt-get仓库</strong></p>
+<p>大部分的常用软件，都可以直接去 ubuntu 官方的 apt 仓库里直接下载安装。故事是这样，最早是软件原作者把自己的代码放到一些网站上。用户可以自己下载安装，但是 ubuntu 是个好心的公司，会有专人把源码下载下来，打造成一个 deb 的包，然后上传到工作的软件仓库中。这样我要做的就是敲                  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> sudo apt-get install git</span><br></code></pre></td></tr></table></figure>
+
+<p>那 git 这个软件的 deb 包就被 apt-get 下载到本地，同时 apt-get 也包裹了 dpkg 命令，所以直接把安装配置过程也完成了。也就是一个命令，git 就直接可以用了。<strong>sudo apt-get install包含了下载，安装，配置全过程，安完后可以直接使用</strong>。</p>
+<p><strong>卸载软件包：</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> sudo apt-get remove git <span class="hljs-comment"># 保留配置文件</span></span><br><span class="hljs-meta">$</span><span class="bash"> sudo apt-get purge git  <span class="hljs-comment"># 连配置文件一起清除</span></span><br></code></pre></td></tr></table></figure>
+
+<p>另外，在使用 apt-get 装包的时候，如果 A 依赖于 B 才能运行，那么 sudo apt-get install A 的时候 B 包也会自动被安装上，也就是能自动处理依赖问题。</p>
+<h1 id="十-用户管理"><a href="#十-用户管理" class="headerlink" title="十.用户管理"></a><strong>十.用户管理</strong></h1><p><strong>创建用户</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> sudo adduser + 用户名   //第一种方法</span><br><span class="hljs-meta">$</span><span class="bash"> sudo useradd -s /bin/bash -g Robin -d /home/Robin -m Robin</span>   <br>//第二种方法 -s 使用什么类型解析器 -g用户所属的组 -d 指定用户的目录 -m如果用户home目录不存在新建一个<br></code></pre></td></tr></table></figure>
+
+<p><strong>删除用户</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> sudo deluser baozheng     //第一种方法</span><br><span class="hljs-meta">$</span><span class="bash"> sudo userdel -r Robin    //删除用户并删除用户目录</span><br><span class="hljs-meta">$</span><span class="bash"> vi /ect/passwd     //查看linux当前有哪些用户</span><br></code></pre></td></tr></table></figure>
+
+<h1 id="十一-快捷键"><a href="#十一-快捷键" class="headerlink" title="十一.快捷键"></a>十一.<strong>快捷键</strong></h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell">ctrl + P //方向键 上<br>ctrl + N //方向键 下<br>ctrl + B  //方向键 前<br>ctrl + F  //方向键 后<br>ctrl + D  //删除光标前面字符<br></code></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <div>
+        
+          <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+        
+      </div>
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i>Linux</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/05/15/GCC-Makefile-GDB-CMake/" rel="prev" title="GCC-Makefile-GDB-CMake">
+      <i class="fa fa-chevron-left"></i> GCC-Makefile-GDB-CMake
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80-%E5%91%BD%E4%BB%A4%E8%A1%8C"><span class="nav-number">1.</span> <span class="nav-text">一.命令行</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">二.文件系统结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89-%E6%97%A5%E5%B8%B8%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C"><span class="nav-number">3.</span> <span class="nav-text">三.日常文件操作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B-%E9%87%8D%E5%AE%9A%E5%90%91"><span class="nav-number">4.</span> <span class="nav-text">四.重定向</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%94-%E6%9D%83%E9%99%90"><span class="nav-number">5.</span> <span class="nav-text">五.权限</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%AD-%E8%BF%9B%E7%A8%8B"><span class="nav-number">6.</span> <span class="nav-text">六.进程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%83-%E6%9F%A5%E6%89%BE"><span class="nav-number">7.</span> <span class="nav-text">七.查找</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%AB-%E7%BD%91%E7%BB%9C%E6%93%8D%E4%BD%9C"><span class="nav-number">8.</span> <span class="nav-text">八.网络操作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B9%9D-%E5%AE%89%E8%A3%85%E8%BD%AF%E4%BB%B6"><span class="nav-number">9.</span> <span class="nav-text">九.安装软件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81-%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86"><span class="nav-number">10.</span> <span class="nav-text">十.用户管理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81%E4%B8%80-%E5%BF%AB%E6%8D%B7%E9%94%AE"><span class="nav-number">11.</span> <span class="nav-text">十一.快捷键</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XuZhang"
+      src="/images/author.jpg">
+  <p class="site-author-name" itemprop="name">XuZhang</p>
+  <div class="site-description" itemprop="description">海阔凭鱼跃，天高任鸟飞</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/xuzhang1108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;xuzhang1108" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/bu-ke-zhi-wei-zhi" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;bu-ke-zhi-wei-zhi" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>知乎</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xuzhang</span>
+</div>
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+		Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+		year - 作为date对象的年份，为4位年份值
+		month - 0-11之间的整数，做为date对象的月份
+		day - 1-31之间的整数，做为date对象的天数
+		hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+		minutes - 0-59之间的整数，做为date对象的分钟数
+		seconds - 0-59之间的整数，做为date对象的秒数
+		microseconds - 0-999之间的整数，做为date对象的毫秒数
+        */
+		var t1 = Date.UTC(2021,05,14,12,00,00); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+-->
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

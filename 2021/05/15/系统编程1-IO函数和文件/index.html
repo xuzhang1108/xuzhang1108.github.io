@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/images/manifest.json">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuzhang1108.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="文件与I&#x2F;O函数open函数 头文件：&lt;sys&#x2F;types.h&gt;, &lt;sys&#x2F;stat.h&gt;, &lt;fcntl.h&gt; 返回值：成功返回非零整数，失败返回-1。 执行类型：O_RDONLY, O_WRONLY, O_RDWR, O_CREAT  1234int fd;fd &#x3D; open(&quot;hello.txt&quot;, O_RDWR)    &#x2F;&#x2F;打卡文件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="系统编程1-IO&#x2F;文件">
+<meta property="og:url" content="http://xuzhang1108.github.io/2021/05/15/%E7%B3%BB%E7%BB%9F%E7%BC%96%E7%A8%8B1-IO%E5%87%BD%E6%95%B0%E5%92%8C%E6%96%87%E4%BB%B6/index.html">
+<meta property="og:site_name" content="XuZhang&#96;s blog">
+<meta property="og:description" content="文件与I&#x2F;O函数open函数 头文件：&lt;sys&#x2F;types.h&gt;, &lt;sys&#x2F;stat.h&gt;, &lt;fcntl.h&gt; 返回值：成功返回非零整数，失败返回-1。 执行类型：O_RDONLY, O_WRONLY, O_RDWR, O_CREAT  1234int fd;fd &#x3D; open(&quot;hello.txt&quot;, O_RDWR)    &#x2F;&#x2F;打卡文件">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic4.zhimg.com/v2-3ccec65999c804320f3b901d8dbdc433_b.png">
+<meta property="og:image" content="https://pic1.zhimg.com/v2-39eba5ed88893549a7031845b5d657e4_b.png">
+<meta property="og:image" content="https://pic1.zhimg.com/v2-8a4111698b6e91a9b9a2b4e8cf70640c_b.png">
+<meta property="og:image" content="https://pic3.zhimg.com/v2-45a49cc47f1ddf02591c06cf70fdd02e_b.png">
+<meta property="article:published_time" content="2021-05-15T02:44:56.000Z">
+<meta property="article:modified_time" content="2021-05-15T12:38:24.704Z">
+<meta property="article:author" content="XuZhang">
+<meta property="article:tag" content="编程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic4.zhimg.com/v2-3ccec65999c804320f3b901d8dbdc433_b.png">
+
+<link rel="canonical" href="http://xuzhang1108.github.io/2021/05/15/%E7%B3%BB%E7%BB%9F%E7%BC%96%E7%A8%8B1-IO%E5%87%BD%E6%95%B0%E5%92%8C%E6%96%87%E4%BB%B6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>系统编程1-IO/文件 | XuZhang`s blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XuZhang`s blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录学习的点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">3</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">8</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuzhang1108.github.io/2021/05/15/%E7%B3%BB%E7%BB%9F%E7%BC%96%E7%A8%8B1-IO%E5%87%BD%E6%95%B0%E5%92%8C%E6%96%87%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/author.jpg">
+      <meta itemprop="name" content="XuZhang">
+      <meta itemprop="description" content="海阔凭鱼跃，天高任鸟飞">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XuZhang`s blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          系统编程1-IO/文件
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-05-15 10:44:56 / 修改时间：20:38:24" itemprop="dateCreated datePublished" datetime="2021-05-15T10:44:56+08:00">2021-05-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%B3%BB%E7%BB%9F%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">系统编程</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="文件与I-O函数"><a href="#文件与I-O函数" class="headerlink" title="文件与I/O函数"></a><strong>文件与I/O函数</strong></h2><h3 id="open函数"><a href="#open函数" class="headerlink" title="open函数"></a><strong>open函数</strong></h3><ul>
+<li>头文件：&lt;sys/types.h&gt;, &lt;sys/stat.h&gt;, &lt;fcntl.h&gt;</li>
+<li>返回值：成功返回非零整数，失败返回-1。</li>
+<li>执行类型：O_RDONLY, O_WRONLY, O_RDWR, O_CREAT</li>
+</ul>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-keyword">int</span> fd;<br>fd = <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;hello.txt&quot;</span>, O_RDWR)    <span class="hljs-comment">//打卡文件</span><br>fd = <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;hello.txt&quot;</span>, O_RDWR|O_CREAT, <span class="hljs-number">0777</span>)  <span class="hljs-comment">//创建文件 但实际hello.txt文件权限并不是777结果回事775，余umask掩码有关</span><br>fd = <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;hello.txt&quot;</span>, O_RDWR|O_TRUNC)     <span class="hljs-comment">//截断操作，此操作会将hello.txt文件中的内容清空</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="close函数"><a href="#close函数" class="headerlink" title="close函数"></a><strong>close函数</strong></h3><ul>
+<li>头文件：&lt;unistd.h&gt;</li>
+<li>函数原型： int close(int fd); </li>
+<li>参数: fd 文件描述符</li>
+<li>返回值：成功返回0， 失败返回-1。</li>
+</ul>
+<h3 id="read函数"><a href="#read函数" class="headerlink" title="read函数"></a><strong>read函数</strong></h3><ul>
+<li>头文件：&lt;unistd.h&gt;</li>
+<li>函数原型 int read(int fd, void *buf, int size);  </li>
+<li>返回值： 失败返回 -1； 文件读完返回0； 读取的字节数返回的数大于0；</li>
+</ul>
+<h3 id="write函数"><a href="#write函数" class="headerlink" title="write函数"></a><strong>write函数</strong></h3><ul>
+<li>头文件&lt;unistd.h&gt;</li>
+<li>函数原型： int write(int fd, void *buf, int size); </li>
+<li>返回值：写入的字节数, 失败返回-1。</li>
+</ul>
+<h3 id="lseek函数"><a href="#lseek函数" class="headerlink" title="lseek函数"></a><strong>lseek函数</strong></h3><ul>
+<li>头文件&lt;sys/types.h&gt;, &lt;unistd.h&gt;</li>
+<li>功能：修改文件偏移量（读写位置）。</li>
+<li>函数原型： off_t lseek(int fd, off_t offset, int whence) </li>
+<li>参数： fd：文件描述符 对offset的解释与whence的值是相关的： 当whence是SEEK_SET, 则将该文件的偏移量设置为距文件开始处offset个字节 当whence是SEEK_CUR,则将该文件的偏移量设置为其当前值加上offset，offset可正可负数。 当whence是SEEK_END,则将该文件的偏移量设置为文件长度加上offset，offset可正可负数。</li>
+<li>返回值：成功返回较文件起始位置向后的偏移量，失败返回-1.</li>
+</ul>
+<h3 id="复制文件示例代码"><a href="#复制文件示例代码" class="headerlink" title="复制文件示例代码"></a><strong>复制文件示例代码</strong></h3><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs awk"><span class="hljs-comment">#include &lt;sys/types.h&gt;</span><br><span class="hljs-comment">#include &lt;sys/stat.h&gt;</span><br><span class="hljs-comment">#include &lt;fcntl.h&gt;</span><br><span class="hljs-comment">#include &lt;unistd.h&gt;</span><br><span class="hljs-comment">#include &lt;stdio.h&gt;</span><br><span class="hljs-comment">#include &lt;stdlib.h&gt;</span><br><br>int main()&#123;<br>    int fd;<br>    fd = open(<span class="hljs-string">&quot;hello.txt&quot;</span>, O_RDONLY);  <span class="hljs-regexp">//</span>打开要复制的文件<br>    <span class="hljs-keyword">if</span>(fd == -<span class="hljs-number">1</span>)&#123;<br>        perror(<span class="hljs-string">&quot;open error&quot;</span>);<br>        <span class="hljs-keyword">exit</span>(<span class="hljs-number">1</span>);<br>    &#125;<br>    <br>    int fd1;<br>    fd1 = open(<span class="hljs-string">&quot;newfile.txt&quot;</span>,   O_WRONLY | O_CREAR, <span class="hljs-number">0777</span>);   <span class="hljs-regexp">//</span>新建文件<br>    <span class="hljs-keyword">if</span>(fd1 == -<span class="hljs-number">1</span>)&#123;<br>        perror(<span class="hljs-string">&quot;open error&quot;</span>);<br>        <span class="hljs-keyword">exit</span>(<span class="hljs-number">1</span>);<br>    &#125;<br>    <br>    int count;<br>    char buf[<span class="hljs-number">1024</span>];<br>    count = read(fd, buf, sizeof(buf));     <span class="hljs-regexp">//</span>读取fd文件描述符里面的内容<br>    <span class="hljs-keyword">if</span>(count == -<span class="hljs-number">1</span>)&#123;<br>        perror(<span class="hljs-string">&quot;read error&quot;</span>);<br>        <span class="hljs-keyword">exit</span>(<span class="hljs-number">1</span>);<br>    &#125;<br>    <br>    <span class="hljs-regexp">//</span>count是read函数的返回值，如果count大于零说明fd描述符对应文件中的内容还没有全部被读完。读完的话count会置位为<span class="hljs-number">0</span>；<br>    <span class="hljs-keyword">while</span>(count)&#123;<br>        int alreadyRead;<br>        alreadyRead = write(fd1, buf, count);<br>        printf(<span class="hljs-string">&quot;written %d bytes\n&quot;</span>, alreadyRead);<br>        count = read(fd, buf, sizeof(buf));<br>    &#125;<br>    <br>    <span class="hljs-regexp">//</span>关闭文件<br>    close(fd);<br>    close(fd1);<br>    return <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="文件共享"><a href="#文件共享" class="headerlink" title="文件共享"></a><strong>文件共享</strong></h3><p><img src="https://pic4.zhimg.com/v2-3ccec65999c804320f3b901d8dbdc433_b.png" alt="img"></p>
+<p><img src="https://pic1.zhimg.com/v2-39eba5ed88893549a7031845b5d657e4_b.png" alt="img"></p>
+<p><img src="https://pic1.zhimg.com/v2-8a4111698b6e91a9b9a2b4e8cf70640c_b.png" alt="img"></p>
+<h3 id="复制文件描述符"><a href="#复制文件描述符" class="headerlink" title="复制文件描述符"></a><strong>复制文件描述符</strong></h3><p><img src="https://pic3.zhimg.com/v2-45a49cc47f1ddf02591c06cf70fdd02e_b.png" alt="img"></p>
+<ul>
+<li>文件描述符复制有三种方法 dup : 搜索空闲的文件描述符来完成复制，跟要复制的文件描述符指向同一个文件 dup2：强制使用一个新的文件描述符来进行复制（不管原来文件描述符是否空闲） fcntl</li>
+<li>fcntl(fd, F_DUPFD, fd_start);</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <div>
+        
+          <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+        
+      </div>
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag"><i class="fa fa-tag"></i>编程</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2021/05/15/%E7%B3%BB%E7%BB%9F%E7%BC%96%E7%A8%8B2-%E8%BF%9B%E7%A8%8B/" rel="next" title="系统编程2-进程">
+      系统编程2-进程 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8EI-O%E5%87%BD%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">文件与I&#x2F;O函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#open%E5%87%BD%E6%95%B0"><span class="nav-number">1.1.</span> <span class="nav-text">open函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#close%E5%87%BD%E6%95%B0"><span class="nav-number">1.2.</span> <span class="nav-text">close函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#read%E5%87%BD%E6%95%B0"><span class="nav-number">1.3.</span> <span class="nav-text">read函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#write%E5%87%BD%E6%95%B0"><span class="nav-number">1.4.</span> <span class="nav-text">write函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lseek%E5%87%BD%E6%95%B0"><span class="nav-number">1.5.</span> <span class="nav-text">lseek函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%E6%96%87%E4%BB%B6%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81"><span class="nav-number">1.6.</span> <span class="nav-text">复制文件示例代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB"><span class="nav-number">1.7.</span> <span class="nav-text">文件共享</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-number">1.8.</span> <span class="nav-text">复制文件描述符</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XuZhang"
+      src="/images/author.jpg">
+  <p class="site-author-name" itemprop="name">XuZhang</p>
+  <div class="site-description" itemprop="description">海阔凭鱼跃，天高任鸟飞</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/xuzhang1108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;xuzhang1108" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/bu-ke-zhi-wei-zhi" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;bu-ke-zhi-wei-zhi" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>知乎</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xuzhang</span>
+</div>
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+		Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+		year - 作为date对象的年份，为4位年份值
+		month - 0-11之间的整数，做为date对象的月份
+		day - 1-31之间的整数，做为date对象的天数
+		hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+		minutes - 0-59之间的整数，做为date对象的分钟数
+		seconds - 0-59之间的整数，做为date对象的秒数
+		microseconds - 0-999之间的整数，做为date对象的毫秒数
+        */
+		var t1 = Date.UTC(2021,05,14,12,00,00); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+-->
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
