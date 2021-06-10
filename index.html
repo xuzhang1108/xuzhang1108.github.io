@@ -132,7 +132,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">10</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">12</span></a>
 
   </li>
   </ul>
@@ -162,6 +162,165 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuzhang1108.github.io/2021/06/10/%E5%89%91%E6%8C%87offer%E6%80%BB%E7%BB%93-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/author.jpg">
+      <meta itemprop="name" content="XuZhang">
+      <meta itemprop="description" content="海阔凭鱼跃，天高任鸟飞">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XuZhang`s blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/06/10/%E5%89%91%E6%8C%87offer%E6%80%BB%E7%BB%93-3/" class="post-title-link" itemprop="url">剑指offer总结-3</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-06-10 22:10:30 / 修改时间：22:14:07" itemprop="dateCreated datePublished" datetime="2021-06-10T22:10:30+08:00">2021-06-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">算法和数据结构</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="第三次总结-（完结-撒花"><a href="#第三次总结-（完结-撒花" class="headerlink" title="第三次总结 （完结 撒花!!!!)"></a>第三次总结 （完结 撒花!!!!)</h1><h2 id="27-字符串的排列"><a href="#27-字符串的排列" class="headerlink" title="**27.字符串的排列"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/fe6b651b66ae47d7acce78ffdd9a96c7?tpId=13&&tqId=11180&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">**27.字符串的排列</a></h2><p><strong>题目：</strong>输入一个字符串,按字典序打印出该字符串中字符的所有排列。例如输入字符串abc,则按字典序打印出由字符a,b,c所能排列出来的所有字符串abc,acb,bac,bca,cab和cba。<br>示例：输入：”ab”            返回值：[“ab”,”ba”]</p>
+<p><strong>思路：</strong>回溯算法的利用，去重的话要首先对数组进行sort排序，然后对排序的数组进行回溯操作，在回溯的过程中要利用used数组进行去重的判断。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> &#123;</span><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function">vector&lt;string&gt; <span class="hljs-title">Permutation</span><span class="hljs-params">(string str)</span> </span>&#123;<br>        <span class="hljs-keyword">if</span> (str.<span class="hljs-built_in">size</span>() == <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> ans;<br>        <span class="hljs-built_in">sort</span>(str.<span class="hljs-built_in">begin</span>(), str.<span class="hljs-built_in">end</span>());<br>        <span class="hljs-function">vector&lt;<span class="hljs-keyword">bool</span>&gt; <span class="hljs-title">used</span><span class="hljs-params">(str.size(), <span class="hljs-literal">false</span>)</span></span>;<br>        <span class="hljs-built_in">backtrace</span>(str, temp, used);<br>        <span class="hljs-keyword">return</span> ans;<br>    &#125;<br><span class="hljs-keyword">private</span>:<br>    vector&lt;string&gt; ans;<br>    string temp;<br>    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">backtrace</span><span class="hljs-params">(string str, string &amp;path, vector&lt;<span class="hljs-keyword">bool</span>&gt; &amp;used)</span> </span>&#123;<br>        <span class="hljs-keyword">if</span> (path.<span class="hljs-built_in">size</span>() == str.<span class="hljs-built_in">size</span>()) &#123;<br>            ans.<span class="hljs-built_in">push_back</span>(path);<br>            <span class="hljs-keyword">return</span>;<br>        &#125;<br>        <br>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; str.<span class="hljs-built_in">size</span>(); i++) &#123;<br>            <span class="hljs-keyword">if</span> (i &gt; <span class="hljs-number">0</span> &amp;&amp; str[i] == str[i<span class="hljs-number">-1</span>] &amp;&amp; !used[i<span class="hljs-number">-1</span>])<br>                <span class="hljs-keyword">continue</span>;<br>            <span class="hljs-keyword">if</span> (!used[i]) &#123;<br>                path.<span class="hljs-built_in">push_back</span>(str[i]);<br>                used[i] = <span class="hljs-literal">true</span>;<br>                <span class="hljs-built_in">backtrace</span>(str, path, used);<br>                path.<span class="hljs-built_in">pop_back</span>();<br>                used[i] = <span class="hljs-literal">false</span>;<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;;<br><br><br></code></pre></td></tr></table></figure>
+
+<h2 id="35-数组中的逆序对"><a href="#35-数组中的逆序对" class="headerlink" title="**35.数组中的逆序对"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/96bd6684e04a44eb80e6a68efc0ec6c5?tpId=13&&tqId=11188&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">**35.数组中的逆序对</a></h2><p><strong>题目</strong>：在数组中的两个数字，如果前面一个数字大于后面的数字，则这两个数字组成一个逆序对。输入一个数组,求出这个数组中的逆序对的总数P。并将P对1000000007取模的结果输出。 即输出P%1000000007</p>
+<p>示例：输入：[1,2,3,4,5,6,7,0]            输出：7</p>
+<p>**思路:**利用归并排序的想法，在归并的过程中若出现，前一个数值大于后一个数值得话，我们就将逆序对的个数加 mid-i+1 个。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> &#123;</span><br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-keyword">const</span> <span class="hljs-keyword">int</span> mod = <span class="hljs-number">1000000007</span>;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">InversePairs</span><span class="hljs-params">(vector&lt;<span class="hljs-keyword">int</span>&gt; data)</span> </span>&#123;<br>        <span class="hljs-keyword">int</span> ret = <span class="hljs-number">0</span>;<br>        <span class="hljs-function">vector&lt;<span class="hljs-keyword">int</span>&gt; <span class="hljs-title">temp</span><span class="hljs-params">(data.size())</span></span>;<br>        <span class="hljs-built_in">Merge_sort</span>(data, temp, <span class="hljs-number">0</span>, data.<span class="hljs-built_in">size</span>() - <span class="hljs-number">1</span>, ret);<br>        <span class="hljs-keyword">return</span> ret;<br>    &#125;<br>    <br>    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Merge_sort</span><span class="hljs-params">(vector&lt;<span class="hljs-keyword">int</span>&gt;&amp; arr, vector&lt;<span class="hljs-keyword">int</span>&gt;&amp; temp, <span class="hljs-keyword">int</span> l, <span class="hljs-keyword">int</span> r, <span class="hljs-keyword">int</span> &amp;ret)</span> </span>&#123;<br>        <span class="hljs-keyword">if</span> (l &gt;= r) <span class="hljs-keyword">return</span>;<br>        <br>        <span class="hljs-keyword">int</span> mid = (r + l) / <span class="hljs-number">2</span>;<br>        <span class="hljs-built_in">Merge_sort</span>(arr, temp, l, mid, ret);<br>        <span class="hljs-built_in">Merge_sort</span>(arr, temp, mid+<span class="hljs-number">1</span>, r, ret);<br>        <span class="hljs-built_in">Merge</span>(arr, temp, l, mid, r, ret);<br>    &#125;<br>    <br>    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Merge</span><span class="hljs-params">(vector&lt;<span class="hljs-keyword">int</span>&gt;&amp; arr, vector&lt;<span class="hljs-keyword">int</span>&gt;&amp;temp, <span class="hljs-keyword">int</span> l, <span class="hljs-keyword">int</span> mid, <span class="hljs-keyword">int</span> r, <span class="hljs-keyword">int</span> &amp;ret)</span> </span>&#123;<br>        <span class="hljs-keyword">int</span> i = l, j = mid + <span class="hljs-number">1</span>, k = <span class="hljs-number">0</span>;<br>        <br>        <span class="hljs-keyword">while</span> (i &lt;= mid &amp;&amp; j &lt;= r) &#123;<br>            <span class="hljs-keyword">if</span> (arr[i] &gt; arr[j]) &#123;<br>                temp[k++] = arr[j++];<br>                ret += mid - i + <span class="hljs-number">1</span>;<br>                ret %= mod;<br>            &#125;<br>            <span class="hljs-keyword">else</span> &#123;<br>                temp[k++] = arr[i++];<br>            &#125;<br>        &#125;<br>        <br>        <span class="hljs-keyword">while</span> (i &lt;= mid)<br>            temp[k++] = arr[i++];<br>        <br>        <span class="hljs-keyword">while</span> (j &lt;= r)<br>            temp[k++] = arr[j++];<br>        <br>        <span class="hljs-keyword">for</span> (i = l, k = <span class="hljs-number">0</span>; i &lt;= r; i++, k++) &#123;<br>            arr[i] = temp[k];<br>        &#125;<br>    &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/06/10/%E5%89%91%E6%8C%87offer%E6%80%BB%E7%BB%93-3/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuzhang1108.github.io/2021/05/31/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/author.jpg">
+      <meta itemprop="name" content="XuZhang">
+      <meta itemprop="description" content="海阔凭鱼跃，天高任鸟飞">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XuZhang`s blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/05/31/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95/" class="post-title-link" itemprop="url">未命名</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-31 19:30:20" itemprop="dateCreated datePublished" datetime="2021-05-31T19:30:20+08:00">2021-05-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>回溯算法</p>
+<p>适用范围:</p>
+<ul>
+<li>组合问题：N个数里面按一定规则找出k个数的集合</li>
+<li>排列问题：N个数按一定规则全排列，有几种排列方式</li>
+<li>切割问题：一个字符串按一定规则有几种切割方式</li>
+<li>子集问题：一个N个数的集合里有多少符合条件的子集</li>
+<li>棋盘问题：N皇后，解数独等等</li>
+</ul>
+<p>回溯模板：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">backtrace</span><span class="hljs-params">(参数)</span> </span>&#123;<br> 	<span class="hljs-keyword">if</span> (终止条件) &#123;<br>        存放结果；<br>        <span class="hljs-keyword">return</span>；<br>    &#125;<br>    <br>    <span class="hljs-keyword">for</span> (做选择) &#123;<br>        处理结点；<br>        <span class="hljs-built_in">backtrace</span>(参数);   <span class="hljs-comment">// 递归</span><br>        回溯：撤销处理结果<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/05/31/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://xuzhang1108.github.io/2021/05/31/%E5%89%91%E6%8C%87offer%E6%80%BB%E7%BB%93-2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -187,7 +346,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-05-31 15:09:28 / 修改时间：15:10:48" itemprop="dateCreated datePublished" datetime="2021-05-31T15:09:28+08:00">2021-05-31</time>
+              <time title="创建时间：2021-05-31 15:09:28 / 修改时间：19:24:35" itemprop="dateCreated datePublished" datetime="2021-05-31T15:09:28+08:00">2021-05-31</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -212,8 +371,36 @@
       
           <h1 id="第二次总结"><a href="#第二次总结" class="headerlink" title="第二次总结"></a>第二次总结</h1><h2 id="4-重建二叉树"><a href="#4-重建二叉树" class="headerlink" title="4.重建二叉树"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/8a19cbe657394eeaac2f6ea9b0f6fcf6?tpId=13&&tqId=11157&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">4.重建二叉树</a></h2><p><strong>题目</strong>：输入某二叉树的前序遍历和中序遍历的结果，请重建出该二叉树。假设输入的前序遍历和中序遍历的结果中都不含重复的数字。例如输入前序遍历序列{1,2,4,7,3,5,6,8}和中序遍历序列{4,7,2,1,5,3,8,6}，则重建二叉树并返回</p>
 <p>示例：输入：[1,2,3,4,5,6,7],[3,2,4,1,6,5,7]                返回值：{1,2,5,3,4,6,7}</p>
-<p><strong>思路：</strong>前序遍历的特点是第一个遍历的结点是根结点。于是我们通过知道了根结点的值，可以在中序遍历找到根结点所在的位置，进而可以划分出树的左子树和右子树。然后根据划分出来的左右子树在进行这样的操作，即：在子树的前序遍历中第一个出现的是子树的根结点，根据子树根结点的值在子树的中序遍历中再次划分子树的左右子树，可见每一次操作都在重复着一个函数，因此，这是个递归过程。递归的终止条件就是遍历到叶子节点，返回。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">TreeNode* <span class="hljs-title">ConstructCore</span><span class="hljs-params">(vector&lt;<span class="hljs-keyword">int</span>&gt; pre, vector&lt;<span class="hljs-keyword">int</span>&gt; vin)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span> (pre.<span class="hljs-built_in">empty</span>() || vin.<span class="hljs-built_in">empty</span>()) <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>    <br>    <span class="hljs-keyword">int</span> rootVal = pre[<span class="hljs-number">0</span>];<br>    TreeNode *root = <span class="hljs-keyword">new</span> <span class="hljs-built_in">TreeNode</span>(rootVal);<br>    <br>    <span class="hljs-keyword">if</span> (pre.<span class="hljs-built_in">size</span>() == <span class="hljs-number">1</span> &amp;&amp; vin.<span class="hljs-built_in">size</span>() == <span class="hljs-number">1</span>) <span class="hljs-keyword">return</span> root;  <span class="hljs-comment">// 到达叶节点，直接返回</span><br>    <br>    <span class="hljs-keyword">int</span> seperate = <span class="hljs-number">0</span>;          <span class="hljs-comment">// 确定根结点在中序遍历中的位置</span><br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; vin.<span class="hljs-built_in">size</span>(); i++) &#123;<br>        <span class="hljs-keyword">if</span> (vin[i] == rootVal) &#123;<br>            seperate = i;<br>            <span class="hljs-keyword">break</span>;<br>        &#125;<br>    &#125;<br>    <br>    <span class="hljs-comment">// 进行左右子树的分割</span><br>    vector&lt;<span class="hljs-keyword">int</span>&gt;<span class="hljs-built_in">vinLeft</span>(vin.<span class="hljs-built_in">begin</span>(), vin.<span class="hljs-built_in">begin</span>()+seperate);  <br>    vector&lt;<span class="hljs-keyword">int</span>&gt;<span class="hljs-built_in">vinRight</span>(vin.<span class="hljs-built_in">begin</span>()+seperate+<span class="hljs-number">1</span>, vin.<span class="hljs-built_in">end</span>());<br>    vector&lt;<span class="hljs-keyword">int</span>&gt;<span class="hljs-built_in">preLeft</span>(pre.<span class="hljs-built_in">begin</span>()+<span class="hljs-number">1</span>, pre.<span class="hljs-built_in">begin</span>()+<span class="hljs-number">1</span>+seperate);<br>    vector&lt;<span class="hljs-keyword">int</span>&gt;<span class="hljs-built_in">preRight</span>(pre.<span class="hljs-built_in">begin</span>()+<span class="hljs-number">1</span>+seperate, pre.<span class="hljs-built_in">end</span>()); <br>    <br>    <span class="hljs-comment">// 使用相同的函数重复进行上面的：1.检查是否到达叶结点 2.确定根结点在中序遍历中位置  3. 分割成左右子树  4.递归调用</span><br>    root-&gt;left = <span class="hljs-built_in">ConstructCore</span>(preLeft, vinLeft);<br>    root-&gt;right = <span class="hljs-built_in">ConstructCore</span>(preRight, vinRight);<br>    <span class="hljs-keyword">return</span> root;<br>&#125;<br><br><span class="hljs-function">TreeNode* <span class="hljs-title">reConstructBinaryTree</span><span class="hljs-params">(vector&lt;<span class="hljs-keyword">int</span>&gt; pre,vector&lt;<span class="hljs-keyword">int</span>&gt; vin)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span> (pre.<span class="hljs-built_in">empty</span>() || vin.<span class="hljs-built_in">empty</span>()) <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">ConstructCore</span>(pre, vin);<br>&#125;<br></code></pre></td></tr></table></figure>
+<html>
+<style>
+    .mac {
+        width:10px;
+        height:10px;
+        border-radius:5px;
+        float:left;
+        margin:10px 0 0 5px;
+    }
+    .b1 {
+        background:#E0443E;
+        margin-left: 10px;
+    }
+    .b2 { background:#DEA123; }
+    .b3 { background:#1AAB29; }
+    .warpper{
+        background:#121212;
+        border-radius:5px;
+        width:400px;
+    }
+</style>
+<div class="warpper">
+    <div class="mac b1"></div>
+    <div class="mac b2"></div>
+    <div class="mac b3"></div>
+<div>
+<br>
+</div></div></html>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;iostream&gt;</span></span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>&#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br><span class="hljs-comment">// ```</span><br><span class="hljs-comment">// 最后需要三个` csdn编辑器连续输入两行```显示有点问题</span><br><br>**思路：**前序遍历的特点是第一个遍历的结点是根结点。于是我们通过知道了根结点的值，可以在中序遍历找到根结点所在的位置，进而可以划分出树的左子树和右子树。然后根据划分出来的左右子树在进行这样的操作，即：在子树的前序遍历中第一个出现的是子树的根结点，根据子树根结点的值在子树的中序遍历中再次划分子树的左右子树，可见每一次操作都在重复着一个函数，因此，这是个递归过程。递归的终止条件就是遍历到叶子节点，返回。<br><br>​```c++<br><span class="hljs-function">TreeNode* <span class="hljs-title">ConstructCore</span><span class="hljs-params">(vector&lt;<span class="hljs-keyword">int</span>&gt; pre, vector&lt;<span class="hljs-keyword">int</span>&gt; vin)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span> (pre.<span class="hljs-built_in">empty</span>() || vin.<span class="hljs-built_in">empty</span>()) <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>    <br>    <span class="hljs-keyword">int</span> rootVal = pre[<span class="hljs-number">0</span>];<br>    TreeNode *root = <span class="hljs-keyword">new</span> <span class="hljs-built_in">TreeNode</span>(rootVal);<br>    <br>    <span class="hljs-keyword">if</span> (pre.<span class="hljs-built_in">size</span>() == <span class="hljs-number">1</span> &amp;&amp; vin.<span class="hljs-built_in">size</span>() == <span class="hljs-number">1</span>) <span class="hljs-keyword">return</span> root;  <span class="hljs-comment">// 到达叶节点，直接返回</span><br>    <br>    <span class="hljs-keyword">int</span> seperate = <span class="hljs-number">0</span>;          <span class="hljs-comment">// 确定根结点在中序遍历中的位置</span><br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; vin.<span class="hljs-built_in">size</span>(); i++) &#123;<br>        <span class="hljs-keyword">if</span> (vin[i] == rootVal) &#123;<br>            seperate = i;<br>            <span class="hljs-keyword">break</span>;<br>        &#125;<br>    &#125;<br>    <br>    <span class="hljs-comment">// 进行左右子树的分割</span><br>    vector&lt;<span class="hljs-keyword">int</span>&gt;<span class="hljs-built_in">vinLeft</span>(vin.<span class="hljs-built_in">begin</span>(), vin.<span class="hljs-built_in">begin</span>()+seperate);  <br>    vector&lt;<span class="hljs-keyword">int</span>&gt;<span class="hljs-built_in">vinRight</span>(vin.<span class="hljs-built_in">begin</span>()+seperate+<span class="hljs-number">1</span>, vin.<span class="hljs-built_in">end</span>());<br>    vector&lt;<span class="hljs-keyword">int</span>&gt;<span class="hljs-built_in">preLeft</span>(pre.<span class="hljs-built_in">begin</span>()+<span class="hljs-number">1</span>, pre.<span class="hljs-built_in">begin</span>()+<span class="hljs-number">1</span>+seperate);<br>    vector&lt;<span class="hljs-keyword">int</span>&gt;<span class="hljs-built_in">preRight</span>(pre.<span class="hljs-built_in">begin</span>()+<span class="hljs-number">1</span>+seperate, pre.<span class="hljs-built_in">end</span>()); <br>    <br>    <span class="hljs-comment">// 使用相同的函数重复进行上面的：1.检查是否到达叶结点 2.确定根结点在中序遍历中位置  3. 分割成左右子树  4.递归调用</span><br>    root-&gt;left = <span class="hljs-built_in">ConstructCore</span>(preLeft, vinLeft);<br>    root-&gt;right = <span class="hljs-built_in">ConstructCore</span>(preRight, vinRight);<br>    <span class="hljs-keyword">return</span> root;<br>&#125;<br><br><span class="hljs-function">TreeNode* <span class="hljs-title">reConstructBinaryTree</span><span class="hljs-params">(vector&lt;<span class="hljs-keyword">int</span>&gt; pre,vector&lt;<span class="hljs-keyword">int</span>&gt; vin)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span> (pre.<span class="hljs-built_in">empty</span>() || vin.<span class="hljs-built_in">empty</span>()) <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">ConstructCore</span>(pre, vin);<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <h2 id="17-树的子结构"><a href="#17-树的子结构" class="headerlink" title="**17.树的子结构"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/6e196c44c7004d15b1610b9afca8bd88?tpId=13&&tqId=11170&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">**17.树的子结构</a></h2><p><strong>题目：</strong>输入两棵二叉树A，B，判断B是不是A的子结构。（ps：我们约定空树不是任意一个树的子结构）</p>
 <p>示例：输入：{8,8,#,9,#,2,#,5},{8,9,#,2}             输出：true</p>
@@ -855,195 +1042,11 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuzhang1108.github.io/2021/05/15/%E7%B3%BB%E7%BB%9F%E7%BC%96%E7%A8%8B2-%E8%BF%9B%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/author.jpg">
-      <meta itemprop="name" content="XuZhang">
-      <meta itemprop="description" content="海阔凭鱼跃，天高任鸟飞">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XuZhang`s blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/05/15/%E7%B3%BB%E7%BB%9F%E7%BC%96%E7%A8%8B2-%E8%BF%9B%E7%A8%8B/" class="post-title-link" itemprop="url">系统编程2-进程</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-05-15 11:17:57 / 修改时间：20:38:09" itemprop="dateCreated datePublished" datetime="2021-05-15T11:17:57+08:00">2021-05-15</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%B3%BB%E7%BB%9F%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">系统编程</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="程序"><a href="#程序" class="headerlink" title="程序"></a><strong>程序</strong></h3><p> 完成特定任务的一系列指令集合。</p>
-<h3 id="进程"><a href="#进程" class="headerlink" title="进程"></a><strong>进程</strong></h3><p>中断技术产生之后，才有了进程这个概念。</p>
-<ul>
-<li>从用户角度来说，进程是程序的一次动态执行过程。</li>
-<li>从操作系统的核心来看，进程是操作系统分配的内存，cpu时间片等资源的基础单位。</li>
-<li>进程是资源分配的最小单位。</li>
-<li>每一个进程都有自己<strong>独立的地址空间和执行状态</strong>。</li>
-</ul>
-<h3 id="PCB"><a href="#PCB" class="headerlink" title="PCB"></a><strong>PCB</strong></h3><p>操作系统感知进程存在的一个重要数据结构。</p>
-<h3 id="程序与进程的差别"><a href="#程序与进程的差别" class="headerlink" title="程序与进程的差别"></a><strong>程序与进程的差别</strong></h3><ul>
-<li>进程是动态的，程序是静态的。</li>
-<li>进程生命周期相对短暂，程序是永久的。</li>
-<li>进程数据结构（PCB）</li>
-<li>一个进程只能对应一个程序，一个程序可以对应多个进程。</li>
-</ul>
-<h3 id="进程状态转换"><a href="#进程状态转换" class="headerlink" title="进程状态转换"></a><strong>进程状态转换</strong></h3>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/05/15/%E7%B3%BB%E7%BB%9F%E7%BC%96%E7%A8%8B2-%E8%BF%9B%E7%A8%8B/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuzhang1108.github.io/2021/05/15/%E7%B3%BB%E7%BB%9F%E7%BC%96%E7%A8%8B1-IO%E5%87%BD%E6%95%B0%E5%92%8C%E6%96%87%E4%BB%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/author.jpg">
-      <meta itemprop="name" content="XuZhang">
-      <meta itemprop="description" content="海阔凭鱼跃，天高任鸟飞">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XuZhang`s blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/05/15/%E7%B3%BB%E7%BB%9F%E7%BC%96%E7%A8%8B1-IO%E5%87%BD%E6%95%B0%E5%92%8C%E6%96%87%E4%BB%B6/" class="post-title-link" itemprop="url">系统编程1-IO/文件</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-05-15 10:44:56 / 修改时间：20:38:24" itemprop="dateCreated datePublished" datetime="2021-05-15T10:44:56+08:00">2021-05-15</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%B3%BB%E7%BB%9F%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">系统编程</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="文件与I-O函数"><a href="#文件与I-O函数" class="headerlink" title="文件与I/O函数"></a><strong>文件与I/O函数</strong></h2><h3 id="open函数"><a href="#open函数" class="headerlink" title="open函数"></a><strong>open函数</strong></h3><ul>
-<li>头文件：&lt;sys/types.h&gt;, &lt;sys/stat.h&gt;, &lt;fcntl.h&gt;</li>
-<li>返回值：成功返回非零整数，失败返回-1。</li>
-<li>执行类型：O_RDONLY, O_WRONLY, O_RDWR, O_CREAT</li>
-</ul>
-<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-keyword">int</span> fd;<br>fd = <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;hello.txt&quot;</span>, O_RDWR)    <span class="hljs-comment">//打卡文件</span><br>fd = <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;hello.txt&quot;</span>, O_RDWR|O_CREAT, <span class="hljs-number">0777</span>)  <span class="hljs-comment">//创建文件 但实际hello.txt文件权限并不是777结果回事775，余umask掩码有关</span><br>fd = <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;hello.txt&quot;</span>, O_RDWR|O_TRUNC)     <span class="hljs-comment">//截断操作，此操作会将hello.txt文件中的内容清空</span><br></code></pre></td></tr></table></figure>
-
-<h3 id="close函数"><a href="#close函数" class="headerlink" title="close函数"></a><strong>close函数</strong></h3><ul>
-<li>头文件：&lt;unistd.h&gt;</li>
-<li>函数原型： int close(int fd); </li>
-<li>参数: fd 文件描述符</li>
-<li>返回值：成功返回0， 失败返回-1。</li>
-</ul>
-<h3 id="read函数"><a href="#read函数" class="headerlink" title="read函数"></a><strong>read函数</strong></h3><ul>
-<li>头文件：&lt;unistd.h&gt;</li>
-<li>函数原型 int read(int fd, void *buf, int size);  </li>
-<li>返回值： 失败返回 -1； 文件读完返回0； 读取的字节数返回的数大于0；</li>
-</ul>
-<h3 id="write函数"><a href="#write函数" class="headerlink" title="write函数"></a><strong>write函数</strong></h3><ul>
-<li>头文件&lt;unistd.h&gt;</li>
-<li>函数原型： int write(int fd, void *buf, int size); </li>
-<li>返回值：写入的字节数, 失败返回-1。</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/05/15/%E7%B3%BB%E7%BB%9F%E7%BC%96%E7%A8%8B1-IO%E5%87%BD%E6%95%B0%E5%92%8C%E6%96%87%E4%BB%B6/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
 
 
 
@@ -1110,7 +1113,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-count">12</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

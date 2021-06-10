@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/images/manifest.json">
+  <meta name="msapplication-config" content="/images/browserconfig.xml">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuzhang1108.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="第三次总结 （完结 撒花!!!!)**27.字符串的排列题目：输入一个字符串,按字典序打印出该字符串中字符的所有排列。例如输入字符串abc,则按字典序打印出由字符a,b,c所能排列出来的所有字符串abc,acb,bac,bca,cab和cba。示例：输入：”ab”            返回值：[“ab”,”ba”] 思路：回溯算法的利用，去重的话要首先对数组进行sort排序，然后对排序的数组进行">
+<meta property="og:type" content="article">
+<meta property="og:title" content="剑指offer总结-3">
+<meta property="og:url" content="http://xuzhang1108.github.io/2021/06/10/%E5%89%91%E6%8C%87offer%E6%80%BB%E7%BB%93-3/index.html">
+<meta property="og:site_name" content="XuZhang&#96;s blog">
+<meta property="og:description" content="第三次总结 （完结 撒花!!!!)**27.字符串的排列题目：输入一个字符串,按字典序打印出该字符串中字符的所有排列。例如输入字符串abc,则按字典序打印出由字符a,b,c所能排列出来的所有字符串abc,acb,bac,bca,cab和cba。示例：输入：”ab”            返回值：[“ab”,”ba”] 思路：回溯算法的利用，去重的话要首先对数组进行sort排序，然后对排序的数组进行">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-10T14:10:30.000Z">
+<meta property="article:modified_time" content="2021-06-10T14:14:07.041Z">
+<meta property="article:author" content="XuZhang">
+<meta property="article:tag" content="算法和数据结构">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://xuzhang1108.github.io/2021/06/10/%E5%89%91%E6%8C%87offer%E6%80%BB%E7%BB%93-3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>剑指offer总结-3 | XuZhang`s blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XuZhang`s blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录学习的点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">4</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">12</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuzhang1108.github.io/2021/06/10/%E5%89%91%E6%8C%87offer%E6%80%BB%E7%BB%93-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/author.jpg">
+      <meta itemprop="name" content="XuZhang">
+      <meta itemprop="description" content="海阔凭鱼跃，天高任鸟飞">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XuZhang`s blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          剑指offer总结-3
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-06-10 22:10:30 / 修改时间：22:14:07" itemprop="dateCreated datePublished" datetime="2021-06-10T22:10:30+08:00">2021-06-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">算法和数据结构</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="第三次总结-（完结-撒花"><a href="#第三次总结-（完结-撒花" class="headerlink" title="第三次总结 （完结 撒花!!!!)"></a>第三次总结 （完结 撒花!!!!)</h1><h2 id="27-字符串的排列"><a href="#27-字符串的排列" class="headerlink" title="**27.字符串的排列"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/fe6b651b66ae47d7acce78ffdd9a96c7?tpId=13&&tqId=11180&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">**27.字符串的排列</a></h2><p><strong>题目：</strong>输入一个字符串,按字典序打印出该字符串中字符的所有排列。例如输入字符串abc,则按字典序打印出由字符a,b,c所能排列出来的所有字符串abc,acb,bac,bca,cab和cba。<br>示例：输入：”ab”            返回值：[“ab”,”ba”]</p>
+<p><strong>思路：</strong>回溯算法的利用，去重的话要首先对数组进行sort排序，然后对排序的数组进行回溯操作，在回溯的过程中要利用used数组进行去重的判断。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> &#123;</span><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function">vector&lt;string&gt; <span class="hljs-title">Permutation</span><span class="hljs-params">(string str)</span> </span>&#123;<br>        <span class="hljs-keyword">if</span> (str.<span class="hljs-built_in">size</span>() == <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> ans;<br>        <span class="hljs-built_in">sort</span>(str.<span class="hljs-built_in">begin</span>(), str.<span class="hljs-built_in">end</span>());<br>        <span class="hljs-function">vector&lt;<span class="hljs-keyword">bool</span>&gt; <span class="hljs-title">used</span><span class="hljs-params">(str.size(), <span class="hljs-literal">false</span>)</span></span>;<br>        <span class="hljs-built_in">backtrace</span>(str, temp, used);<br>        <span class="hljs-keyword">return</span> ans;<br>    &#125;<br><span class="hljs-keyword">private</span>:<br>    vector&lt;string&gt; ans;<br>    string temp;<br>    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">backtrace</span><span class="hljs-params">(string str, string &amp;path, vector&lt;<span class="hljs-keyword">bool</span>&gt; &amp;used)</span> </span>&#123;<br>        <span class="hljs-keyword">if</span> (path.<span class="hljs-built_in">size</span>() == str.<span class="hljs-built_in">size</span>()) &#123;<br>            ans.<span class="hljs-built_in">push_back</span>(path);<br>            <span class="hljs-keyword">return</span>;<br>        &#125;<br>        <br>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; str.<span class="hljs-built_in">size</span>(); i++) &#123;<br>            <span class="hljs-keyword">if</span> (i &gt; <span class="hljs-number">0</span> &amp;&amp; str[i] == str[i<span class="hljs-number">-1</span>] &amp;&amp; !used[i<span class="hljs-number">-1</span>])<br>                <span class="hljs-keyword">continue</span>;<br>            <span class="hljs-keyword">if</span> (!used[i]) &#123;<br>                path.<span class="hljs-built_in">push_back</span>(str[i]);<br>                used[i] = <span class="hljs-literal">true</span>;<br>                <span class="hljs-built_in">backtrace</span>(str, path, used);<br>                path.<span class="hljs-built_in">pop_back</span>();<br>                used[i] = <span class="hljs-literal">false</span>;<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;;<br><br><br></code></pre></td></tr></table></figure>
+
+<h2 id="35-数组中的逆序对"><a href="#35-数组中的逆序对" class="headerlink" title="**35.数组中的逆序对"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/96bd6684e04a44eb80e6a68efc0ec6c5?tpId=13&&tqId=11188&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">**35.数组中的逆序对</a></h2><p><strong>题目</strong>：在数组中的两个数字，如果前面一个数字大于后面的数字，则这两个数字组成一个逆序对。输入一个数组,求出这个数组中的逆序对的总数P。并将P对1000000007取模的结果输出。 即输出P%1000000007</p>
+<p>示例：输入：[1,2,3,4,5,6,7,0]            输出：7</p>
+<p>**思路:**利用归并排序的想法，在归并的过程中若出现，前一个数值大于后一个数值得话，我们就将逆序对的个数加 mid-i+1 个。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> &#123;</span><br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-keyword">const</span> <span class="hljs-keyword">int</span> mod = <span class="hljs-number">1000000007</span>;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">InversePairs</span><span class="hljs-params">(vector&lt;<span class="hljs-keyword">int</span>&gt; data)</span> </span>&#123;<br>        <span class="hljs-keyword">int</span> ret = <span class="hljs-number">0</span>;<br>        <span class="hljs-function">vector&lt;<span class="hljs-keyword">int</span>&gt; <span class="hljs-title">temp</span><span class="hljs-params">(data.size())</span></span>;<br>        <span class="hljs-built_in">Merge_sort</span>(data, temp, <span class="hljs-number">0</span>, data.<span class="hljs-built_in">size</span>() - <span class="hljs-number">1</span>, ret);<br>        <span class="hljs-keyword">return</span> ret;<br>    &#125;<br>    <br>    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Merge_sort</span><span class="hljs-params">(vector&lt;<span class="hljs-keyword">int</span>&gt;&amp; arr, vector&lt;<span class="hljs-keyword">int</span>&gt;&amp; temp, <span class="hljs-keyword">int</span> l, <span class="hljs-keyword">int</span> r, <span class="hljs-keyword">int</span> &amp;ret)</span> </span>&#123;<br>        <span class="hljs-keyword">if</span> (l &gt;= r) <span class="hljs-keyword">return</span>;<br>        <br>        <span class="hljs-keyword">int</span> mid = (r + l) / <span class="hljs-number">2</span>;<br>        <span class="hljs-built_in">Merge_sort</span>(arr, temp, l, mid, ret);<br>        <span class="hljs-built_in">Merge_sort</span>(arr, temp, mid+<span class="hljs-number">1</span>, r, ret);<br>        <span class="hljs-built_in">Merge</span>(arr, temp, l, mid, r, ret);<br>    &#125;<br>    <br>    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Merge</span><span class="hljs-params">(vector&lt;<span class="hljs-keyword">int</span>&gt;&amp; arr, vector&lt;<span class="hljs-keyword">int</span>&gt;&amp;temp, <span class="hljs-keyword">int</span> l, <span class="hljs-keyword">int</span> mid, <span class="hljs-keyword">int</span> r, <span class="hljs-keyword">int</span> &amp;ret)</span> </span>&#123;<br>        <span class="hljs-keyword">int</span> i = l, j = mid + <span class="hljs-number">1</span>, k = <span class="hljs-number">0</span>;<br>        <br>        <span class="hljs-keyword">while</span> (i &lt;= mid &amp;&amp; j &lt;= r) &#123;<br>            <span class="hljs-keyword">if</span> (arr[i] &gt; arr[j]) &#123;<br>                temp[k++] = arr[j++];<br>                ret += mid - i + <span class="hljs-number">1</span>;<br>                ret %= mod;<br>            &#125;<br>            <span class="hljs-keyword">else</span> &#123;<br>                temp[k++] = arr[i++];<br>            &#125;<br>        &#125;<br>        <br>        <span class="hljs-keyword">while</span> (i &lt;= mid)<br>            temp[k++] = arr[i++];<br>        <br>        <span class="hljs-keyword">while</span> (j &lt;= r)<br>            temp[k++] = arr[j++];<br>        <br>        <span class="hljs-keyword">for</span> (i = l, k = <span class="hljs-number">0</span>; i &lt;= r; i++, k++) &#123;<br>            arr[i] = temp[k];<br>        &#125;<br>    &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h2 id="39-平衡二叉树"><a href="#39-平衡二叉树" class="headerlink" title="**39.平衡二叉树"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/8b3b95850edb4115918ecebdf1b4d222?tpId=13&&tqId=11192&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">**39.平衡二叉树</a></h2><p><strong>题目</strong>：输入一棵二叉树，判断该二叉树是否是平衡二叉树。在这里，我们只需要考虑其平衡性，不需要考虑其是不是排序二叉树<strong>平衡二叉树</strong>（Balanced Binary Tree），具有以下性质：它是一棵空树或它的左右两个子树的高度差的绝对值不超过1，并且左右两个子树都是一棵平衡二叉树。</p>
+<p>示例: 输入：{1,2,3,4,5,6,7}                                        输出：true</p>
+<p><strong>思路</strong>：如果以pRoot为根结点的树是平衡二叉树</p>
+<p>​            那么它的左子树和右子树也必定是平衡二叉树，并且左子树的高度与右子树的高度相差不能大于1.</p>
+<p>​            因此，我们需要记录两个数据：树的深度和是否是平衡树</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ReturnType</span> &#123;</span><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-keyword">bool</span> isBalancee;<br>    <span class="hljs-keyword">int</span> height;<br>    <br>    <span class="hljs-built_in">ReturnType</span>(<span class="hljs-keyword">bool</span> isB, <span class="hljs-keyword">int</span> hei): <span class="hljs-built_in">isBalanced</span>(isB), <span class="hljs-built_in">height</span>(hei) &#123;&#125;<br>&#125;;<br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> &#123;</span><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">IsBalanced_Solution</span><span class="hljs-params">(TreeNode* pRoot)</span> </span>&#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-built_in">process</span>(pRoot).isBalance;<br>    &#125;<br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-function">ReturnType <span class="hljs-title">process</span><span class="hljs-params">(TreeNode* root)</span> </span>&#123;<br>        <span class="hljs-keyword">if</span> (!root) &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-built_in">ReturnTyep</span>(<span class="hljs-literal">true</span>, <span class="hljs-number">0</span>);<br>        &#125;<br>        <br>        ReturnType leftData = <span class="hljs-built_in">process</span>(root-&gt;left);<br>        ReturnType rightData = <span class="hljs-built_in">process</span>(root-&gt;right);<br>        <br>        <span class="hljs-keyword">int</span> height = <span class="hljs-built_in">max</span>(leftData.height, rightData.height) + <span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">bool</span> isBalanced = lefData.isBalance &amp;&amp; rightData.isBalance &amp;&amp; <span class="hljs-built_in">abs</span>(leftData.height-rightData.height) &lt; <span class="hljs-number">2</span>;<br>        <br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">ReturnType</span>(isBalanced, height);<br>    &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h2 id="49-把字符串换成整数"><a href="#49-把字符串换成整数" class="headerlink" title="49.把字符串换成整数"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/1277c681251b4372bdef344468e4f26e?tpId=13&&tqId=11202&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">49.把字符串换成整数</a></h2><p><strong>题目：</strong>将一个字符串转换成一个整数，要求不能使用字符串转换整数的库函数。 数值为0或者字符串不是一个合法的数值则返回0。输入描述：输入一个字符串,包括数字字母符号,可以为空     返回值描述：如果是合法的数值表达则返回该数字，否则返回0</p>
+<p>示例：输入：”+2147483647”                返回值：2147483647</p>
+<p>​            输入：”1a33”                                返回值：0</p>
+<p><strong>思路</strong>：从字符串的头部开始索引，如果字符是数字就进行构造整数的运算：构造整数的运算 num = num * 10 + （s[i] - ‘0’); 如果碰到非法的字符就直接返回 0.</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">StrToInt</span><span class="hljs-params">(string str)</span> </span>&#123;<br>    <span class="hljs-keyword">int</span> len = str.<span class="hljs-built_in">size</span>();<br>    <span class="hljs-keyword">if</span> (len == <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">int</span> ret = <span class="hljs-number">0</span>, pnCounter = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; len; i++) &#123;<br>        <span class="hljs-keyword">if</span> (str[i] == <span class="hljs-string">&#x27;+&#x27;</span> || str[i] == <span class="hljs-string">&#x27;-&#x27;</span>) &#123;<br>            ++pnCounter;<br>            <span class="hljs-keyword">if</span> (pnCounter &gt; <span class="hljs-number">1</span>)<br>                <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>            <span class="hljs-keyword">continue</span>; <br>        &#125;<br>        <span class="hljs-keyword">if</span> (str[i] &lt; <span class="hljs-string">&#x27;0&#x27;</span> || str[i] &gt; <span class="hljs-string">&#x27;9&#x27;</span>)<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>        ret = ret * <span class="hljs-number">10</span> + (str[i] - <span class="hljs-string">&#x27;0&#x27;</span>);<br>    &#125;<br>    <span class="hljs-keyword">if</span> (str[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;-&#x27;</span>) <br>        ret = -ret;<br>    <span class="hljs-keyword">return</span> ret;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="51-构建乘积数组"><a href="#51-构建乘积数组" class="headerlink" title="51.构建乘积数组"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/94a4d381a68b47b7a8bed86f2975db46?tpId=13&&tqId=11204&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">51.构建乘积数组</a></h2><p><strong>题目：</strong>给定一个数组A[0,1,…,n-1],请构建一个数组B[0,1,…,n-1],其中B中的元素B[i]=A[0]<em>A[1]</em>…*A[i-1]<em>A[i+1]</em>…*A[n-1]。不能使用除法。（注意：规定B[0] = A[1] * A[2] * … * A[n-1]，B[n-1] = A[0] * A[1] * … * A[n-2];）</p>
+<p>对于A长度为1的情况，B无意义，故而无法构建，因此该情况不会存在。</p>
+<p>示例：输入：[1,2,3,4,5]                    输出：[120,60,40,30,24]</p>
+<p><strong>思路：</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">vector&lt;<span class="hljs-keyword">int</span>&gt; <span class="hljs-title">multiply</span><span class="hljs-params">(<span class="hljs-keyword">const</span> vector&lt;<span class="hljs-keyword">int</span>&gt;&amp; A)</span> </span>&#123;<br>    <span class="hljs-keyword">int</span> lenOfA = A.<span class="hljs-built_in">size</span>();<br>    vector&lt;<span class="hljs-keyword">int</span>&gt; ret;<br>    <span class="hljs-keyword">if</span> (lenOfA &lt; <span class="hljs-number">2</span>) <span class="hljs-keyword">return</span> ret;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; lenOfA; i++) &#123;<br>        <span class="hljs-keyword">int</span> sum = <span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j = <span class="hljs-number">0</span>; j &lt; lenOfA; j++) &#123;<br>            <span class="hljs-keyword">if</span> (j == i) <span class="hljs-keyword">continue</span>;<br>            sum *= A[j];<br>        &#125;<br>        ret.<span class="hljs-built_in">push_back</span>(sum);<br>    &#125;<br>    <span class="hljs-keyword">return</span> ret;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="52-正则表达式匹配"><a href="#52-正则表达式匹配" class="headerlink" title="52.正则表达式匹配"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/28970c15befb4ff3a264189087b99ad4?tpId=13&&tqId=11205&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">52.正则表达式匹配</a></h2><p><strong>题目：</strong>请实现一个函数用来匹配包括’.’和’<em>‘的正则表达式。模式中的字符’.’表示任意一个字符，而’</em>‘表示它前面的字符可以出现任意次（包含0次）。 在本题中，匹配是指字符串的所有字符匹配整个模式。例如，字符串”aaa”与模式”a.a”和”ab<em>ac</em>a”匹配，但是与”aa.a”和”ab*a”均不匹配</p>
+<p>示例：输入：”aaa”,”a*a”                    输出：true</p>
+<p><strong>思路：</strong>当 pattern[1] 不等于 ‘<em>‘ 那么我们先判断他们俩的首字母是否相同，如果相同将str和pattern的头部分别向后移动进行递归调用，如果不同直接返回 false。当  pattern[1] 等于 ‘ * ‘,如果首字母不同，str保持不动，pattern的首字母向后移动两个位置。如果首字母相同，pattern和str会产生两种匹配模式：1.匹配0次 2.匹配多次（匹配多次时将‘a</em>’ 当做一个整体）。直到str和pattern的size 等于 0 终止递归，逐级返回结果。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">match</span><span class="hljs-params">(string str, string pattern)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span> (str.<span class="hljs-built_in">size</span>() == <span class="hljs-number">0</span> &amp;&amp; pattern.<span class="hljs-built_in">size</span>() == <span class="hljs-number">0</span>) <br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (pattern.<span class="hljs-built_in">size</span>() == <span class="hljs-number">0</span>)<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    <br>    <span class="hljs-keyword">if</span> (pattern[<span class="hljs-number">1</span>] != <span class="hljs-string">&#x27;*&#x27;</span>) &#123;<br>        <span class="hljs-keyword">if</span> (str[<span class="hljs-number">0</span>] == pattern[<span class="hljs-number">0</span>] || (str[<span class="hljs-number">0</span>] != <span class="hljs-string">&#x27;\0&#x27;</span> &amp;&amp; pattern[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;.&#x27;</span>))<br>            <span class="hljs-keyword">return</span> <span class="hljs-built_in">match</span>(str.<span class="hljs-built_in">substr</span>(<span class="hljs-number">1</span>), pattern.<span class="hljs-built_in">substr</span>(<span class="hljs-number">1</span>));<br>        <span class="hljs-keyword">else</span><br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    &#125;<br>    <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-keyword">if</span> (str[<span class="hljs-number">0</span>] == pattern[<span class="hljs-number">0</span>] || (str[<span class="hljs-number">0</span>] != <span class="hljs-string">&#x27;\0&#x27;</span> &amp;&amp; pattern[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;.&#x27;</span>))<br>            <span class="hljs-keyword">return</span> <span class="hljs-built_in">match</span>(str.<span class="hljs-built_in">substr</span>(<span class="hljs-number">1</span>), pattern) || <span class="hljs-built_in">match</span>(str, pattern.<span class="hljs-built_in">substr</span>(<span class="hljs-number">2</span>));<br>        <span class="hljs-keyword">else</span><br>            <span class="hljs-keyword">return</span> <span class="hljs-built_in">match</span>(str, pattern.<span class="hljs-built_in">substr</span>(<span class="hljs-number">2</span>));<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="53-表示数值的字符串"><a href="#53-表示数值的字符串" class="headerlink" title="53.表示数值的字符串"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/e69148f8528c4039ad89bb2546fd4ff8?tpId=13&&tqId=11206&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">53.表示数值的字符串</a></h2><p><strong>题目</strong>：请实现一个函数用来判断字符串是否表示数值（包括整数和小数）。例如，字符串”+100”,”5e2”,”-123”,”3.1416”和”-1E-16”都表示数值。 但是”12e”,”1a3.14”,”1.2.3”,”+-5”和”12e+4.3”都不是。</p>
+<p>示例：输入：”123.45e+6”                输出：true</p>
+<p>​            输入：”1.2.3”                         输出：false</p>
+<p><strong>思路</strong>：首先，我们要将字符串中的特例拿出来进行分析。</p>
+<p>​            1.正负号：正负号只能出现在字符串的开头或者“E和e”的后面，不出现在末尾。</p>
+<p>​            2.小数点：小数点只能出现在在E或者e的前面并且小数点不能出现在开头，且小数点的数目不应大于1.</p>
+<p>​            3.E和e：不能出现在开头或者末尾且只能使用一次。e或者E的前面只能是数字</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">isNumeric</span><span class="hljs-params">(string str)</span> </span>&#123;<br>    <span class="hljs-keyword">bool</span> DoesHasE = <span class="hljs-literal">false</span>;<br>    <span class="hljs-keyword">int</span> dotNum = <span class="hljs-number">0</span>;<br><br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; str.<span class="hljs-built_in">size</span>(); i++) &#123;<br>        <span class="hljs-keyword">if</span> (str[i] &gt;= <span class="hljs-string">&#x27;0&#x27;</span> &amp;&amp; str[i] &lt;= <span class="hljs-string">&#x27;9&#x27;</span>) &#123;<br>            <span class="hljs-keyword">continue</span>;<br>        &#125;<br>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (str[i] == <span class="hljs-string">&#x27;+&#x27;</span> || str[i] == <span class="hljs-string">&#x27;-&#x27;</span>) &#123;<br>            <span class="hljs-keyword">if</span> ((i &gt; <span class="hljs-number">0</span> &amp;&amp; str[i<span class="hljs-number">-1</span>] != <span class="hljs-string">&#x27;e&#x27;</span>) &amp;&amp; (i &gt; <span class="hljs-number">0</span> &amp;&amp; str[i<span class="hljs-number">-1</span>] != <span class="hljs-string">&#x27;E&#x27;</span>))<br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (i == str.<span class="hljs-built_in">size</span>()<span class="hljs-number">-1</span> )<br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>        &#125;<br>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (str[i] == <span class="hljs-string">&#x27;.&#x27;</span>) &#123;<br>            ++dotNum;<br>            <span class="hljs-keyword">if</span> (i == <span class="hljs-number">0</span>)<br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>            <span class="hljs-keyword">if</span> (DoesHasE)<br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>            <span class="hljs-keyword">if</span> (dotNum &gt; <span class="hljs-number">1</span>)<br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>        &#125;<br>        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (str[i] == <span class="hljs-string">&#x27;e&#x27;</span> || str[i] == <span class="hljs-string">&#x27;E&#x27;</span>) &#123;<br>            <span class="hljs-keyword">if</span> (i == <span class="hljs-number">0</span> || i == str.<span class="hljs-built_in">size</span>()<span class="hljs-number">-1</span> || DoesHasE || str[i<span class="hljs-number">-1</span>] &lt; <span class="hljs-string">&#x27;0&#x27;</span> || str[i<span class="hljs-number">-1</span>] &gt; <span class="hljs-string">&#x27;9&#x27;</span>) &#123;<br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>            &#125;<br>            DoesHasE = <span class="hljs-literal">true</span>;<br>        &#125;<br>        <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="54-字符流中第一个不重复的字符"><a href="#54-字符流中第一个不重复的字符" class="headerlink" title="54.字符流中第一个不重复的字符"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/00de97733b8e4f97a3fb5c680ee10720?tpId=13&&tqId=11207&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">54.字符流中第一个不重复的字符</a></h2><p><strong>题目：</strong>请实现一个函数用来找出字符流中第一个只出现一次的字符。例如，当从字符流中只读出前两个字符”go”时，第一个只出现一次的字符是”g”。当从该字符流中读出前六个字符“google”时，第一个只出现一次的字符是”l”。</p>
+<p>后台会用以下方式调用Insert 和 FirstAppearingOnce 函数</p>
+<blockquote>
+<p>string caseout = “”;</p>
+<p>1.读入测试用例字符串casein</p>
+<p>2.如果对应语言有Init()函数的话，执行Init() 函数</p>
+<p>3.循环遍历字符串里的每一个字符ch {</p>
+<p>Insert(ch);</p>
+<p>caseout += FirstAppearingOnce()</p>
+<p>}</p>
+<p>\2. 输出caseout，进行比较。</p>
+</blockquote>
+<p>示例：如果当前字符流没有存在出现一次的字符，返回#字符。</p>
+<p><strong>思路：</strong>利用哈希表记录插入的每个字符出现的次数。然后再遍历整个哈希表，若哈希表中有次数为1的字符那么我们直接返回，否则直至遍历完整个哈希表，若遍历完，还是没有就直接返回#。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs c++">string data;<br><span class="hljs-comment">//Insert one char from stringstream</span><br><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Insert</span><span class="hljs-params">(<span class="hljs-keyword">char</span> ch)</span> </span>&#123;<br>	data.<span class="hljs-built_in">push_back</span>(ch);<br>&#125;<br><span class="hljs-comment">//return the first appearence once char in current stringstream</span><br><span class="hljs-function"><span class="hljs-keyword">char</span> <span class="hljs-title">FirstAppearingOnce</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-keyword">if</span> (data.<span class="hljs-built_in">empty</span>()) <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;#&#x27;</span>;<br>	unordered_map&lt;<span class="hljs-keyword">char</span>, <span class="hljs-keyword">int</span>&gt; hashTable;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; data.<span class="hljs-built_in">size</span>(); i++) &#123;<br>        hashTable[data[i]]++;<br>    &#125;<br>    <br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; data.<span class="hljs-built_in">size</span>(); i++) &#123;<br>        <span class="hljs-keyword">if</span> (hashTable[data[i]] == <span class="hljs-number">1</span>)<br>            <span class="hljs-keyword">return</span> data[i];<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;#&#x27;</span>;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h2 id="55-链表中环的入口结点"><a href="#55-链表中环的入口结点" class="headerlink" title="**55.链表中环的入口结点"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/253d2c59ec3e4bc68da16833f79a38e4?tpId=13&&tqId=11208&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">**55.链表中环的入口结点</a></h2><p><strong>题目：</strong>给一个链表，若其中包含环，请找出该链表的环的入口结点，否则，输出null。</p>
+<p><strong>思路：</strong>我们基于快慢指针来实现找到环的入口，如果快指针会遇到空的话说明此链表中不存在环形链表。否则有环，如果有环的话，快指针一定会在环中走了N圈后与慢指针在环中相遇，例如，这就好比赛跑一样，一个人跑步的速度比另外一个人的速度快，快的那个人肯定会在跑道上与慢的那个人再次在某个位置相遇。此题中，我们让快慢指针开始的位置都在头结点，然后让快指针每次走两个结点，慢指针每次走一个结点。</p>
+<p>假设链表头结点距离链表中的环的入口结点的距离为X。</p>
+<p>链表入口距离两个指针相遇的位置为Y。</p>
+<p>两个指针到环形入口的距离为Z。</p>
+<p>那么我们可以知道快指针在环中走了N圈后与慢指针相遇，因此 慢指针走了X+Y 步所指向的结点 = 快指针走了N*（Y+Z) + X+Y步的结点。</p>
+<p>又因为 快指针的速度是慢指针速度的2倍，所以快指针走过的距离是慢指针走过的距离的两倍。即：2（X+Y) = N （Y+Z) + X+Y</p>
+<p>我们将N*（Y+Z)拆成 （N-1) （Y+Z）+ Y+Z, 于是上面的式子两端就可以删掉一个X+Y，所以式子变为 X+Y = N（Y+Z）</p>
+<p>将 Y 右移 并将左面 提出 个 Y+Z ，则是式子变成：X = （N-1) （Y+Z) + Z。</p>
+<p>于是我们可以发现我们可以通过X和Z, 来找到环的入口。因为当N = 1的时候 X = Z环形入口距离头结点的距离是Z，所以我们可以在Z的位置指定一个临时结点，并将快指针指向头部，然后同时遍历两个结点，当两个结点相遇我们就找到了，环形入口。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">ListNode* <span class="hljs-title">EntryNodeOfLoop</span><span class="hljs-params">(ListNode* pHead)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span> (pHead == <span class="hljs-literal">nullptr</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">nullptr</span>;<br>    ListNode* fast = pHead;<br>    ListNode* slow = pHead;<br>    <br>    <span class="hljs-keyword">while</span> (fast-&gt;next &amp;&amp; fast-&gt;next-&gt;next) &#123;<br>        fast = fast-&gt;next-&gt;next;<br>        slow = slow-&gt;next;<br>        <span class="hljs-keyword">if</span> (fast == slow) &#123;<br>            ListNode* index = fast;<br>            fast = pHead;<br>            <span class="hljs-keyword">while</span> (index != fast) &#123;<br>                index = index-&gt;next;<br>                fast = fast-&gt;next;<br>            &#125;<br>            <span class="hljs-keyword">return</span> fast;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">nullptr</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="56-删除链表中重复的结点"><a href="#56-删除链表中重复的结点" class="headerlink" title="56.删除链表中重复的结点"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/fc533c45b73a41b0b44ccba763f866ef?tpId=13&&tqId=11209&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">56.删除链表中重复的结点</a></h2><p><strong>题目：</strong>在一个排序的链表中，存在重复的结点，请删除该链表中重复的结点，重复的结点不保留，返回链表头指针。 例如，链表1-&gt;2-&gt;3-&gt;3-&gt;4-&gt;4-&gt;5 处理后为 1-&gt;2-&gt;5</p>
+<p>示例：输入：{1,2,3,3,4,4,5}                        输出：{1,2,5}</p>
+<p><strong>思路：</strong>首先创建个哑结点，我们让其的next指针指向给定的头结点，然后将哑结点拷贝给一个临时结点，为了进行从头到尾遍历这个链表。为了遍历这个链表我们应该将取 临时结点的next和next-&gt;next, 之后在循环中判断next 和next-&gt;next的值是否相等。如果相等保留next结点不变，再建一个循环直到找到和next不相同的结点。于是我们将临时结点的next更换成这个新找到的不同于next-&gt;next的结点。直到我们遍历完整个链表，我们就删除完了链表中重复的结点。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">ListNode* <span class="hljs-title">deleteDuplication</span><span class="hljs-params">(ListNode* pHead)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span> (!pHead )<br>        <span class="hljs-keyword">return</span> pHead;<br>    <br>    ListNode* dummyHead = <span class="hljs-keyword">new</span> <span class="hljs-built_in">ListNode</span>(<span class="hljs-number">-1</span>);<br>    dummyHead-&gt;next = pHead;<br>    ListNode* cur = dummyHead;<br>    <br>    <span class="hljs-keyword">while</span> (cur-&gt;next &amp;&amp; cur-&gt;next-&gt;next) &#123;<br>        ListNode* p = cur-&gt;next;<br>        ListNode* n = cur-&gt;next-&gt;next;<br>        <br>        <span class="hljs-keyword">if</span> (p-&gt;val == n-&gt;val) &#123;<br>           	<span class="hljs-keyword">while</span> (n != <span class="hljs-literal">nullptr</span> &amp;&amp; p-&gt;val == n-&gt;val) &#123;<br>            	n = n-&gt;next;<br>            &#125;<br>            cur-&gt;next = n;<br>        &#125; <br>       	<span class="hljs-keyword">else</span> &#123;<br>             cur = p;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> dummyHead-&gt;next;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="57-二叉树的下一个结点"><a href="#57-二叉树的下一个结点" class="headerlink" title="57.二叉树的下一个结点"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/9023a0c988684a53960365b889ceaf5e?tpId=13&&tqId=11210&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">57.二叉树的下一个结点</a></h2><p><strong>题目：</strong>给定一个二叉树其中的一个结点，请找出中序遍历顺序的下一个结点并且返回。注意，树中的结点不仅包含左右子结点，同时包含指向父结点的next指针。</p>
+<p><strong>思路：</strong>我们首先通过给定的结点逐级往上反找到根结点。然后根据根结点我们在自顶向下进行结点的中序遍历将结点保存到vector容器中。在遍历vector容器，我们就可以找到二叉树的下一个结点了。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">ConstructNodes</span><span class="hljs-params">(vector&lt;TreeLinkNode*&gt; &amp;arr, TreeLinkNode* head)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span> (head == <span class="hljs-literal">nullptr</span>) <br>        <span class="hljs-keyword">return</span>;<br>    <br>    <span class="hljs-built_in">ConstructNodes</span>(arr, head-&gt;left);<br>    arr.<span class="hljs-built_in">push_back</span>(head);<br>    <span class="hljs-built_in">ConstructNodes</span>(arr, head-&gt;right);<br>&#125;<br><br><span class="hljs-function">TreeLinkNode* <span class="hljs-title">GetNext</span><span class="hljs-params">(TreeLinkNode* pNode)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span> (!pNode) <br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">nullptr</span>;<br>    vector&lt;TreeLinkNode*&gt; Nodes;<br>    TreeLinkNode* cur = pNode;<br>    <br>    <span class="hljs-keyword">while</span> (cur-&gt;next) &#123;<br>        cur = cur-&gt;next;<br>    &#125;<br>    <br>    <span class="hljs-built_in">ConstructNodes</span>(Nodes, cur);<br>    <br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; Nodes.<span class="hljs-built_in">size</span>(); i++) &#123;<br>        <span class="hljs-keyword">if</span> (Nodes[i] == pNode &amp;&amp; i != Nodes.<span class="hljs-built_in">size</span>()<span class="hljs-number">-1</span>) &#123;<br>            <span class="hljs-keyword">return</span> Nodes[i+<span class="hljs-number">1</span>];<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">nullptr</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="58-对称的二叉树"><a href="#58-对称的二叉树" class="headerlink" title="58.对称的二叉树"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/ff05d44dfdb04e1d83bdbdab320efbcb?tpId=13&&tqId=11211&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">58.对称的二叉树</a></h2><p><strong>题目</strong>：请实现一个函数，用来判断一棵二叉树是不是对称的。注意，如果一个二叉树同此二叉树的镜像是同样的，定义其为对称的。</p>
+<p>示例：输入：{8,6,6,5,7,7,5}                    输出：true</p>
+<p>​            输入：{8,6,9,5,7,7,5}                    输出：false</p>
+<p><strong>思路</strong>：前序遍历各个结点进行比较，如左子树的左节点和右子树的右节点，左子树的右节点与右子树的左节点分别进行比较，如果不等放回false。否则继续遍历下去。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">isSymmetrical</span><span class="hljs-params">(TreeNode* pRoot)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span> (pRoot == <span class="hljs-literal">nullptr</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">isSymmetricalCore</span>(pRoot-&gt;left, pRoot-&gt;right);<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">isSymmetricalCore</span><span class="hljs-params">(TreeNode* p1, TreeNode* p2)</span> </span>&#123;<br>    <span class="hljs-keyword">if</span> (!p1 &amp;&amp; !p2) <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>    <span class="hljs-keyword">if</span> (!p1 || !p2) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    <span class="hljs-keyword">if</span> (p1-&gt;val != p2-&gt;val) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    <br>    <span class="hljs-keyword">bool</span> left = <span class="hljs-built_in">isSymmetricalCore</span>(p1-&gt;left, p2-&gt;right);<br>    <span class="hljs-keyword">bool</span> right = <span class="hljs-built_in">isSymmetricalCore</span>(p1-&gt;right, p2-&gt;left);<br>    <span class="hljs-keyword">return</span> left&amp;&amp;right;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="59-按之字形顺讯打印二叉树"><a href="#59-按之字形顺讯打印二叉树" class="headerlink" title="59.按之字形顺讯打印二叉树"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/91b69814117f4e8097390d107d2efbe0?tpId=13&&tqId=11212&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">59.按之字形顺讯打印二叉树</a></h2><p><strong>题目：</strong>请实现一个函数按照之字形打印二叉树，即第一行按照从左到右的顺序打印，第二层按照从右至左的顺序打印，第三行按照从左到右的顺序打印，其他行以此类推。</p>
+<p>示例：输入：{8,6,10,5,7,9,11}                    输出：[[8],[10,6],[5,7,9,11]]</p>
+<p><strong>思路：</strong>二叉树的层序遍历，只不过在层序遍历中穿插了数组的翻转。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> &#123;</span><br><span class="hljs-keyword">public</span>:<br>    vector&lt;vector&lt;<span class="hljs-keyword">int</span>&gt; &gt; <span class="hljs-built_in">Print</span>(TreeNode* pRoot) &#123;<br>        <span class="hljs-keyword">if</span> (!pRoot) <span class="hljs-keyword">return</span> ret;<br>        queue&lt;TreeNode*&gt; q;<br>        TreeNode* cur = pRoot;<br>        q.<span class="hljs-built_in">push</span>(cur);<br>        <span class="hljs-keyword">int</span> level = <span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">while</span> (!q.<span class="hljs-built_in">empty</span>()) &#123;<br>        	<span class="hljs-keyword">int</span> len = q.<span class="hljs-built_in">size</span>();<br>            path.<span class="hljs-built_in">clear</span>();<br>            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; len; i++) &#123;<br>                TreeNode* temp = q.<span class="hljs-built_in">front</span>();<br>                q.<span class="hljs-built_in">pop</span>();<br>                path.<span class="hljs-built_in">push_back</span>(temp-&gt;val);<br>                <span class="hljs-keyword">if</span> (temp-&gt;left != <span class="hljs-literal">nullptr</span>)<br>                    q.<span class="hljs-built_in">push</span>(temp-&gt;left);<br>                <span class="hljs-keyword">if</span> (temp-&gt;right != <span class="hljs-literal">nullptr</span>)<br>                    q.<span class="hljs-built_in">push</span>(temp-&gt;right);<br>            &#125;<br>            <br>            <span class="hljs-keyword">if</span> (level % <span class="hljs-number">2</span> == <span class="hljs-number">0</span>)<br>                <span class="hljs-built_in">Reverse</span>(path);<br>            ret.<span class="hljs-built_in">push_back</span>(path);<br>            level++;<br>        &#125;<br>        <br>        <span class="hljs-keyword">return</span> ret;<br>    &#125;<br><br><span class="hljs-keyword">private</span>:<br>    vector&lt;vector&lt;<span class="hljs-keyword">int</span>&gt; &gt; ret;<br>    vector&lt;<span class="hljs-keyword">int</span>&gt; path;<br>    <br>    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Reverse</span><span class="hljs-params">(vector&lt;<span class="hljs-keyword">int</span>&gt; &amp;arr)</span> </span>&#123;<br>        <span class="hljs-keyword">int</span> start = <span class="hljs-number">0</span>, end = arr.<span class="hljs-built_in">size</span>()<span class="hljs-number">-1</span>;<br>        <span class="hljs-keyword">while</span> (start &lt; end) &#123;<br>            <span class="hljs-built_in">swap</span>(arr[start++], arr[end--]);<br>        &#125;<br>    &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h2 id="60-把二叉树打印成多行"><a href="#60-把二叉树打印成多行" class="headerlink" title="60.把二叉树打印成多行"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/445c44d982d04483b04a54f298796288?tpId=13&&tqId=11213&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">60.把二叉树打印成多行</a></h2><p><strong>题目：</strong>从上到下按层打印二叉树，同一层结点从左至右输出。每一层输出一行。</p>
+<p>示例：输入：{8,6,10,5,7,9,11}                        输出：[[8],[6,10],[5,7,9,11]]</p>
+<p><strong>思路：</strong>二叉树的层序遍历</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> &#123;</span><br><span class="hljs-keyword">public</span>:<br>    vector&lt;vector&lt;<span class="hljs-keyword">int</span>&gt; &gt; <span class="hljs-built_in">Print</span>(TreeNode* pRoot) &#123;<br>		<span class="hljs-keyword">if</span> (!pRoot) <span class="hljs-keyword">return</span> ret;<br>        queue&lt;TreeNode*&gt; q;<br>        q.<span class="hljs-built_in">push</span>(pRoot);<br>        <br>        <span class="hljs-keyword">while</span> (!q.<span class="hljs-built_in">empty</span>()) &#123;<br>            path.<span class="hljs-built_in">clear</span>();<br>            <span class="hljs-keyword">int</span> len = q.<span class="hljs-built_in">size</span>();<br>            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; len; i++) &#123;<br>                TreeNode* temp = q.<span class="hljs-built_in">front</span>();<br>                q.<span class="hljs-built_in">pop</span>();<br>                path.<span class="hljs-built_in">push_back</span>(temp-&gt;val);<br>                <span class="hljs-keyword">if</span> (temp-&gt;left != <span class="hljs-literal">nullptr</span>)<br>                    q.<span class="hljs-built_in">push</span>(temp-&gt;left);<br>                <span class="hljs-keyword">if</span> (temp-&gt;right != <span class="hljs-literal">nullptr</span>)<br>                    q.<span class="hljs-built_in">push</span>(temp-&gt;right);<br>            &#125;<br>            ret.<span class="hljs-built_in">push_back</span>(path);<br>        &#125;<br>        <span class="hljs-keyword">return</span> ret;<br>    &#125;<br><br><span class="hljs-keyword">private</span>:<br>    vector&lt;vector&lt;<span class="hljs-keyword">int</span>&gt; &gt; ret;<br>    vector&lt;<span class="hljs-keyword">int</span>&gt; path;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h2 id="61-序列化二叉树"><a href="#61-序列化二叉树" class="headerlink" title="**61.序列化二叉树"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/cf7e25aa97c04cc1a68c8f040e71fb84?tpId=13&&tqId=11214&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">**61.序列化二叉树</a></h2><p><strong>题目</strong>：请实现两个函数，分别用来序列化和反序列化二叉树</p>
+<p>二叉树的序列化是指：把一棵二叉树按照某种遍历方式的结果以某种格式保存为字符串，从而使得内存中建立起来的二叉树可以持久保存。序列化可以基于先序、中序、后序、层序的二叉树遍历方式来进行修改，序列化的结果是一个字符串，序列化时通过 某种符号表示空节点（#），以 ！ 表示一个结点值的结束（value!）。</p>
+<p>二叉树的反序列化是指：根据某种遍历顺序得到的序列化字符串结果str，重构二叉树。</p>
+<p>例如，我们可以把一个只有根节点为1的二叉树序列化为”1,”，然后通过自己的函数来解析回这个二叉树</p>
+<p>示例：输入：{8,6,10,5,7,9,11}                    输出：{8,6,10,5,7,9,11}</p>
+<p><strong>思路：</strong>利用先序遍历遍历每一个结点将每一个节点转化成字符串，反序列化同样使用先序遍历构建二叉树。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> &#123;</span><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-keyword">char</span>* <span class="hljs-title">Serialize</span><span class="hljs-params">(TreeNode *root)</span> </span>&#123;    <br>        <span class="hljs-keyword">if</span> (root == <span class="hljs-literal">nullptr</span>) &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;#&quot;</span>;<br>        &#125;<br>        <br>        string str = <span class="hljs-built_in">to_string</span>(root-&gt;val);<br>        str.<span class="hljs-built_in">push_back</span>(<span class="hljs-string">&#x27;,&#x27;</span>);<br>        <br>        <span class="hljs-keyword">char</span>* left = <span class="hljs-built_in">Serialize</span>(root-&gt;left);<br>        <span class="hljs-keyword">char</span>* right = <span class="hljs-built_in">Serialize</span>(root-&gt;right);<br>        <br>        <span class="hljs-keyword">char</span>* temp = <span class="hljs-keyword">new</span> <span class="hljs-keyword">char</span>[<span class="hljs-built_in">strlen</span>(left)+<span class="hljs-built_in">strlen</span>(right)+str.<span class="hljs-built_in">size</span>()];<br>        <span class="hljs-built_in">strcpy</span>(temp,str.<span class="hljs-built_in">c_str</span>());<br>        <span class="hljs-built_in">strcat</span>(temp, left);<br>        <span class="hljs-built_in">strcat</span>(temp, right);<br>        <br>        <span class="hljs-keyword">return</span> temp;<br>    &#125;<br>    <span class="hljs-function">TreeNode* <span class="hljs-title">Deserialize</span><span class="hljs-params">(<span class="hljs-keyword">char</span> *str)</span> </span>&#123;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strlen</span>(str) == <span class="hljs-number">1</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">nullptr</span>;<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">DeserializeCore</span>(str);<br>    &#125;<br>    <br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-function">TreeNode* <span class="hljs-title">DeserializeCore</span><span class="hljs-params">(<span class="hljs-keyword">char</span>* &amp;str)</span> </span>&#123;<br>        <span class="hljs-keyword">if</span> (*str == <span class="hljs-string">&#x27;#&#x27;</span>) &#123;<br>            str++;<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">nullptr</span>;<br>        &#125;<br>        <br>        <span class="hljs-keyword">int</span> rootVal = <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">while</span> (*str != <span class="hljs-string">&#x27;,&#x27;</span>) &#123;<br>            rootVal = rootVal * <span class="hljs-number">10</span> + (*str - <span class="hljs-string">&#x27;0&#x27;</span>);<br>            str++;<br>        &#125;<br>        <br>        str++;<br>        TreeNode *root = <span class="hljs-keyword">new</span> <span class="hljs-built_in">TreeNode</span>(rootVal);<br><br>        root-&gt;left = <span class="hljs-built_in">DeserializeCore</span>(str);<br>        root-&gt;right = <span class="hljs-built_in">DeserializeCore</span>(str);<br><br>        <span class="hljs-keyword">return</span> root;<br>    &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h2 id="62-二叉搜索树的第K个结点"><a href="#62-二叉搜索树的第K个结点" class="headerlink" title="62.二叉搜索树的第K个结点"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/ef068f602dde4d28aab2b210e859150a?tpId=13&&tqId=11215&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">62.二叉搜索树的第K个结点</a></h2><p><strong>题目：</strong>给定一棵二叉搜索树，请找出其中的第k小的TreeNode结点。</p>
+<p>示例：输入：{5,3,7,2,4,6,8},3        输出：{4}</p>
+<p>​            说明：按结点数值大小顺序第三小结点的值为4</p>
+<p><strong>思路：</strong>二叉搜索树的中序遍历是升序的。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> &#123;</span><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function">TreeNode* <span class="hljs-title">KthNode</span><span class="hljs-params">(TreeNode* pRoot, <span class="hljs-keyword">int</span> k)</span> </span>&#123;<br>        <span class="hljs-keyword">if</span> (!pRoot || k &lt; <span class="hljs-number">1</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">nullptr</span>;<br>        <br>        <span class="hljs-built_in">storeNode</span>(pRoot);<br>        <span class="hljs-keyword">if</span> (k<span class="hljs-number">-1</span> &gt;= record.<span class="hljs-built_in">size</span>()) <span class="hljs-keyword">return</span> <span class="hljs-literal">nullptr</span>;<br>        <span class="hljs-keyword">return</span> record[k<span class="hljs-number">-1</span>];<br>    &#125; <br>    <br><span class="hljs-keyword">private</span>:<br>    vector&lt;TreeNode*&gt; record;<br>    <br>    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">storeNode</span><span class="hljs-params">(TreeNode* pRoot)</span> </span>&#123;<br>        <span class="hljs-keyword">if</span> (!pRoot) <span class="hljs-keyword">return</span>;<br>        <br>        <span class="hljs-built_in">storeNode</span>(pRoot-&gt;left);<br>        record.<span class="hljs-built_in">push_back</span>(pRoot);<br>        <span class="hljs-built_in">storeNode</span>(pRoot-&gt;right);<br>    &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h2 id="63-数据流中的中位数"><a href="#63-数据流中的中位数" class="headerlink" title="63.数据流中的中位数"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/9be0172896bd43948f8a32fb954e1be1?tpId=13&&tqId=11216&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">63.数据流中的中位数</a></h2><p><strong>题目：</strong>如何得到一个数据流中的中位数？如果从数据流中读出奇数个数值，那么中位数就是所有数值排序之后位于中间的数值。如果从数据流中读出偶数个数值，那么中位数就是所有数值排序之后中间两个数的平均值。我们使用Insert()方法读取数据流，使用GetMedian()方法获取当前读取数据的中位数。</p>
+<p><strong>思路：</strong>利用优先级队列实现大顶堆和小顶堆，大顶堆存储中位数左面的升序序列（堆顶是中位数左面的值），小顶堆存储中位数右面的升序序列（堆顶是中位数右面的值）。若大顶堆的size 大于 小顶堆的size 表明数据流的size是奇数，直接返回大顶堆的堆顶就完了，否则返回大顶堆和小顶堆的堆顶平均值。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> &#123;</span><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Insert</span><span class="hljs-params">(<span class="hljs-keyword">int</span> num)</span> </span>&#123;<br>        max_q.<span class="hljs-built_in">push</span>(num);<br>        <span class="hljs-keyword">int</span> n = max_q.<span class="hljs-built_in">top</span>();<br>        max_q.<span class="hljs-built_in">pop</span>();<br>        min_q.<span class="hljs-built_in">push</span>(n);<br>        <span class="hljs-keyword">while</span> (min_q.<span class="hljs-built_in">size</span>() &gt; max_q.<span class="hljs-built_in">size</span>()) &#123;<br>            <span class="hljs-keyword">int</span> number = min_q.<span class="hljs-built_in">top</span>();<br>            min_q.<span class="hljs-built_in">pop</span>();<br>            max_q.<span class="hljs-built_in">push</span>(number);<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">double</span> <span class="hljs-title">GetMedian</span><span class="hljs-params">()</span> </span>&#123; <br>        <span class="hljs-keyword">return</span> max_q.<span class="hljs-built_in">size</span>() &gt; min_q.<span class="hljs-built_in">size</span>() ? max_q.<span class="hljs-built_in">top</span>() : <span class="hljs-keyword">static_cast</span>&lt;<span class="hljs-keyword">double</span>&gt;(max_q.<span class="hljs-built_in">top</span>() + min_q.<span class="hljs-built_in">top</span>())/<span class="hljs-number">2</span>;<br>    &#125;<br><br><span class="hljs-keyword">private</span>:<br>    priority_queue&lt;<span class="hljs-keyword">int</span>&gt; max_q;<br>    priority_queue&lt;<span class="hljs-keyword">int</span>, vector&lt;<span class="hljs-keyword">int</span>&gt;, greater&lt;<span class="hljs-keyword">int</span>&gt;&gt;min_q;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h2 id="64-滑动窗口的最大值"><a href="#64-滑动窗口的最大值" class="headerlink" title="**64.滑动窗口的最大值"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/1624bc35a45c42c0bc17d17fa0cba788?tpId=13&&tqId=11217&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">**64.滑动窗口的最大值</a></h2><p><strong>题目</strong>：给定一个数组和滑动窗口的大小，找出所有滑动窗口里数值的最大值。例如，如果输入数组{2,3,4,2,6,2,5,1}及滑动窗口的大小3，那么一共存在6个滑动窗口，他们的最大值分别为{4,4,6,6,6,5}； 针对数组{2,3,4,2,6,2,5,1}的滑动窗口有以下6个： {[2,3,4],2,6,2,5,1}， {2,[3,4,2],6,2,5,1}， {2,3,[4,2,6],2,5,1}， {2,3,4,[2,6,2],5,1}， {2,3,4,2,[6,2,5],1}， {2,3,4,2,6,[2,5,1]}。</p>
+<p>窗口大于数组长度的时候，返回空</p>
+<p>示例：输入：[2,3,4,2,6,2,5,1],3                    输出：[4,4,6,6,6,5]</p>
+<p><strong>思路：</strong>利用双端队列，队列里的数值保持单调递减的顺序。滑动窗口的最大值就是双端队列的头部。</p>
+<ol>
+<li>若队列为空，就直接添加。否则判断后添加进来的数值与队尾的数值大小（因为我们要让队列保持单调递减的状态）。如果大于添加值大于队尾的值，我们弹出队尾的值，在比较队列中队尾值跟当前值的大小，若当前值大于他，就弹出队尾值。循环往复执行直至，队尾值大于当前值，退出循环。将当前值加入队列。</li>
+</ol>
+<p>​    2.如果队列里保存的头部信息过期了，即：滑动窗口里不包含了双端队列里的头部信息，我们要将其从队列中去除。</p>
+<p>​    3.如果遍历的索引达到了形成窗口的条件，我们要将队列头部的值加入到结果中。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> &#123;</span><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function">vector&lt;<span class="hljs-keyword">int</span>&gt; <span class="hljs-title">maxInWindows</span><span class="hljs-params">(<span class="hljs-keyword">const</span> vector&lt;<span class="hljs-keyword">int</span>&gt;&amp; num, <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> size)</span> </span>&#123;<br>        vector&lt;<span class="hljs-keyword">int</span>&gt; ret;<br>        <span class="hljs-keyword">int</span> len = num.<span class="hljs-built_in">size</span>();<br>        <span class="hljs-keyword">if</span> (len == <span class="hljs-number">0</span> || size &lt; <span class="hljs-number">1</span> || size &gt; len) <br>            <span class="hljs-keyword">return</span> ret;<br>        deque&lt;<span class="hljs-keyword">int</span>&gt; dq;<br>        <br>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; len; i++) &#123;<br>            <span class="hljs-keyword">while</span> (!dq.<span class="hljs-built_in">empty</span>() &amp;&amp; num[i] &gt; num[dq.<span class="hljs-built_in">back</span>()])<br>                dq.<span class="hljs-built_in">pop_back</span>();<br>            dq.<span class="hljs-built_in">push_back</span>(i);<br>            <br>            <span class="hljs-keyword">if</span> (dq.<span class="hljs-built_in">front</span>()+size &lt;= i) &#123;<br>                dq.<span class="hljs-built_in">pop_front</span>();<br>            &#125;<br>            <br>            <span class="hljs-keyword">if</span> (i + <span class="hljs-number">1</span> &gt;= size) &#123;<br>                ret.<span class="hljs-built_in">push_back</span>(num[dq.<span class="hljs-built_in">front</span>()]);<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">return</span> ret;<br>    &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h2 id="65-矩阵中的路径"><a href="#65-矩阵中的路径" class="headerlink" title="**65.矩阵中的路径"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/2a49359695a544b8939c77358d29b7e6?tpId=13&&tqId=11218&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">**65.矩阵中的路径</a></h2><p><strong>题目：</strong>请设计一个函数，用来判断在一个矩阵中是否存在一条包含某字符串所有字符的路径。路径可以从矩阵中的任意一个格子开始，每一步可以在矩阵中向左，向右，向上，向下移动一个格子。如果一条路径经过了矩阵中的某一个格子，则该路径不能再进入该格子。 例如<br>$$<br>\left[</p>
+<p>\matrix{</p>
+<p>  a &amp; b &amp; c &amp; e\</p>
+<p>  s &amp; f &amp; c &amp; s\</p>
+<p>  a &amp; d &amp; e &amp;e <br>    }<br>\right]<br>$$<br>矩阵中包含一条字符串”bcced”的路径，但是矩阵中不包含”abcb”路径，因为字符串的第一个字符b占据了矩阵中的第一行第二个格子之后，路径不能再次进入该格子。</p>
+<p>示例：输入：[[a,b,c,e],[s,f,c,s],[a,d,e,e]],”abcced”                输出：true</p>
+<p>​            输入：[[a,b,c,e],[s,f,c,s],[a,d,e,e]],”abcb”                    输出：false</p>
+<p><strong>思路：</strong>回溯即暴力递归 (force recursion) 遍历尝试给定的数组或字符串。判断给定的矩阵中是否有这条路径，那么我们就应该从头开始遍历这个二维矩阵，然后利用深度优先搜索（不撞南墙不回头的方法）来寻找这条路径。例如我们从上面的矩阵 a 开始对他的上下左右四个方向分别进行尝试，如果四个方向中有一个搜索到的结果是target (abcced) 中的第二个字符b的话，我们就移动到那个位置继续深度优先搜索，重复这个过程直到找到结果，返回true。或者遍历完整个矩阵，没有找到结果返回false。ps:走过的路径要加标记防止走回头路。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> &#123;</span><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 代码中的类名、方法名、参数名已经指定，请勿修改，直接返回方法规定的值即可</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * </span><br><span class="hljs-comment">     * @param matrix char字符型vector&lt;vector&lt;&gt;&gt; </span><br><span class="hljs-comment">     * @param word string字符串 </span><br><span class="hljs-comment">     * @return bool布尔型</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">hasPath</span><span class="hljs-params">(vector&lt;vector&lt;<span class="hljs-keyword">char</span>&gt; &gt;&amp; matrix, string word)</span> </span>&#123;<br>        <span class="hljs-keyword">if</span> (matrix.<span class="hljs-built_in">empty</span>() || word.<span class="hljs-built_in">empty</span>()) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>        rows = matrix.<span class="hljs-built_in">size</span>();<br>        cols = matrix[<span class="hljs-number">0</span>].<span class="hljs-built_in">size</span>();<br>        <br>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; rows; i++) &#123;<br>            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j = <span class="hljs-number">0</span>; j &lt; cols; j++) &#123;<br>                <span class="hljs-keyword">if</span> (<span class="hljs-built_in">dfs</span>(matrix, word, i, j, <span class="hljs-number">0</span>))<br>                    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    &#125;<br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-keyword">int</span> rows, cols;<br>    <span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">dfs</span><span class="hljs-params">(vector&lt;vector&lt;<span class="hljs-keyword">char</span>&gt; &gt;&amp; matrix, string word, <span class="hljs-keyword">int</span> i, <span class="hljs-keyword">int</span> j, <span class="hljs-keyword">int</span> k)</span> </span>&#123;<br>        <span class="hljs-keyword">if</span> (i &lt; <span class="hljs-number">0</span> || i &gt;= rows || j &lt; <span class="hljs-number">0</span> || j &gt;= cols || matrix[j][j] != word[k])<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>        <span class="hljs-keyword">if</span> (k == word.<span class="hljs-built_in">size</span>()<span class="hljs-number">-1</span>)<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>        matrix[i][j] = <span class="hljs-string">&#x27;\0&#x27;</span>;<br>        <span class="hljs-keyword">bool</span> res = <span class="hljs-built_in">dfs</span>(matrix, word, i+<span class="hljs-number">1</span>, j, k+<span class="hljs-number">1</span>) || <span class="hljs-built_in">dfs</span>(matrix, word, i<span class="hljs-number">-1</span>, j, k+<span class="hljs-number">1</span>)<br>            		|| <span class="hljs-built_in">dfs</span>(matrix, word, i, j<span class="hljs-number">-1</span>, k+<span class="hljs-number">1</span>)|| <span class="hljs-built_in">dfs</span>(matrix, word, i, j+<span class="hljs-number">1</span>, k+<span class="hljs-number">1</span>);<br>        matrix[i][j] = word[k];<br>        <span class="hljs-keyword">return</span> res;<br>    &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h2 id="66-机器人的运动范围"><a href="#66-机器人的运动范围" class="headerlink" title="**66.机器人的运动范围"></a>**<a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/6e5207314b5241fb83f2329e89fdecc8?tpId=13&&tqId=11219&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">66.机器人的运动范围</a></h2><p><strong>题目：</strong>地上有一个rows行和cols列的方格。坐标从 [0,0] 到 [rows-1,cols-1]。一个机器人从坐标0,0的格子开始移动，每一次只能向左，右，上，下四个方向移动一格，但是不能进入行坐标和列坐标的数位之和大于threshold的格子。 例如，当threshold为18时，机器人能够进入方格[35,37]，因为3+5+3+7 = 18。但是，它不能进入方格[35,38]，因为3+5+3+8 = 19。请问该机器人能够达到多少个格子？</p>
+<p>示例：输入：1,2,3                                        输出：3</p>
+<p>​            输入：0,1,3                                        输出：1</p>
+<p>​            输入：10,1,100                                 输出：29</p>
+<p>​            说明：[0,0],[0,1],[0,2],[0,3],[0,4],</p>
+<p>​                        [0,5],[0,6],[0,7],[0,8],[0,9],</p>
+<p>​                        [0,10],[0,11],[0,12],[0,13],</p>
+<p>​                        [0,14],[0,15],[0,16],[0,17],</p>
+<p>​                        [0,18],[0,19],[0,20],[0,21],</p>
+<p>​                        [0,22],[0,23],[0,24],[0,25],</p>
+<p>​                        [0,26],[0,27],[0,28] </p>
+<p>​                        这29种，后面的[0,29],[0,30]以及[0,31]等等是无法到达的   </p>
+<p>​            输入：5,10,10                                输出：21</p>
+<p><strong>思路：</strong>因为机器人遍历的数组是有特点的，即数组横纵坐标和的值往右和往下是递增的我们只需遍历这两个方向就可以实现遍历整个数组。利用队列先进先出的特性实现BFS（宽度优先搜索）。和二叉树的利用队列实现层序遍历的过程过程差不多，首先我们将开始位置加入到队列中，然后利用队列是否为空作为循环条件。在循环体内实现具体的逻辑。 本题的具体逻辑是，首先在循环中我们先获取队列头部元素。然后在右和下两个方向进行移动，在移动元素前我们应先判断该元素是否出界是否是首个元素是否大于target是否遍历过啊，如果是 continue。否则进行移动并将移动后的位置将入队列，并将 result++，直至队列为空退出循环。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> &#123;</span><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">movingCount</span><span class="hljs-params">(<span class="hljs-keyword">int</span> threshold, <span class="hljs-keyword">int</span> rows, <span class="hljs-keyword">int</span> cols)</span> </span>&#123;<br>        <span class="hljs-keyword">if</span> (!threshold) <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">int</span> dx[<span class="hljs-number">2</span>] = &#123;<span class="hljs-number">1</span>, <span class="hljs-number">0</span>&#125;;<br>        <span class="hljs-keyword">int</span> dy[<span class="hljs-number">2</span>] = &#123;<span class="hljs-number">0</span>, <span class="hljs-number">1</span>&#125;;<br>        vector&lt;vector&lt;<span class="hljs-keyword">int</span>&gt;&gt; <span class="hljs-built_in">map</span>(rows, vector&lt;<span class="hljs-keyword">int</span>&gt;(cols, <span class="hljs-number">0</span>));<br>        queue&lt;pair&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>&gt;&gt; q;<br>        <span class="hljs-keyword">int</span> ret = <span class="hljs-number">1</span>;<br>        map[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>] = <span class="hljs-number">1</span>;<br>        q.<span class="hljs-built_in">push</span>(<span class="hljs-built_in">make_pair</span>(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>));<br>        <br>        <span class="hljs-keyword">while</span> (!q.<span class="hljs-built_in">empty</span>()) &#123;<br>            <span class="hljs-keyword">auto</span> [x, y] = q.<span class="hljs-built_in">front</span>();<br>            q.<span class="hljs-built_in">pop</span>();<br>            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">2</span>; i++) &#123;<br>                <span class="hljs-keyword">int</span> tx = x + dx[i];<br>                <span class="hljs-keyword">int</span> ty = y + dy[i];<br>                <span class="hljs-keyword">if</span> (tx &lt; <span class="hljs-number">0</span> || tx &gt;= rows || ty &lt; <span class="hljs-number">0</span> || ty &gt;= cols || map[tx][ty] || <span class="hljs-built_in">GetSum</span>(tx)+<span class="hljs-built_in">GetSum</span>(ty) &gt; threshold)<br>                    <span class="hljs-keyword">continue</span>;<br>                q.<span class="hljs-built_in">push</span>(<span class="hljs-built_in">make_pair</span>(tx, ty));<br>                map[tx][ty] = <span class="hljs-number">1</span>;<br>                ret++;<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">return</span> ret;<br>    &#125;<br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">GetSum</span><span class="hljs-params">(<span class="hljs-keyword">int</span> n)</span> </span>&#123;<br>       	<span class="hljs-keyword">int</span> sum = <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">while</span> (n) &#123;<br>            sum += n % <span class="hljs-number">10</span>;<br>            n /= <span class="hljs-number">10</span>;<br>        &#125;<br>        <span class="hljs-keyword">return</span> sum;<br>    &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h2 id="67-剪绳子"><a href="#67-剪绳子" class="headerlink" title="**67.剪绳子"></a><a target="_blank" rel="noopener" href="https://www.nowcoder.com/practice/57d85990ba5b440ab888fc72b0751bf8?tpId=13&&tqId=33257&rp=1&ru=/ta/coding-interviews&qru=/ta/coding-interviews/question-ranking">**67.剪绳子</a></h2><p><strong>题目：</strong>给你一根长度为n的绳子，请把绳子剪成整数长的m段（m、n都是整数，n&gt;1并且m&gt;1，m&lt;=n），每段绳子的长度记为k[1],…,k[m]。请问k[1]x…xk[m]可能的最大乘积是多少？例如，当绳子的长度是8时，我们把它剪成长度分别为2、3、3的三段，此时得到的最大乘积是18。</p>
+<p>示例：输入：8                                输出：18</p>
+<p><strong>思路：</strong>自底向上推出长度为n的绳子的长度。假如我们切一根长度为 i 的绳子我们可以在绳子的位置 j 处切断，然后不切了那么结果是 j*(i-j). 我们还可以将剩下的一部分 i-j 这一块继续切割，因为我们是从前往后推的，所以 i-j 这块绳子 我们已经计算过了直接利用结果就完事了。故形成递推公式：</p>
+<p>​                                                                $ dp[i] = max(dp[i], max(j*(i-j), j*dp[i-j]))$</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> &#123;</span><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">cutRope</span><span class="hljs-params">(<span class="hljs-keyword">int</span> number)</span> </span>&#123;<br>        <span class="hljs-function">vector&lt;<span class="hljs-keyword">int</span>&gt; <span class="hljs-title">dp</span><span class="hljs-params">(number+<span class="hljs-number">1</span>)</span></span>;<br>        dp[<span class="hljs-number">1</span>] = dp[<span class="hljs-number">2</span>] =<span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">3</span>; i &lt;= number; i++) &#123;<br>            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j = <span class="hljs-number">1</span>; j &lt; i; j++) &#123;<br>                dp[i] = <span class="hljs-built_in">max</span>(dp[i], <span class="hljs-built_in">max</span>(j*(i-j), j*dp[i-j]));<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">return</span> dp[number];<br>    &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <div>
+        
+          <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+        
+      </div>
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95%E5%92%8C%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"><i class="fa fa-tag"></i>算法和数据结构</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/05/31/%E5%9B%9E%E6%BA%AF%E7%AE%97%E6%B3%95/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E6%AC%A1%E6%80%BB%E7%BB%93-%EF%BC%88%E5%AE%8C%E7%BB%93-%E6%92%92%E8%8A%B1"><span class="nav-number">1.</span> <span class="nav-text">第三次总结 （完结 撒花!!!!)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#27-%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E6%8E%92%E5%88%97"><span class="nav-number">1.1.</span> <span class="nav-text">**27.字符串的排列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#35-%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E9%80%86%E5%BA%8F%E5%AF%B9"><span class="nav-number">1.2.</span> <span class="nav-text">**35.数组中的逆序对</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#39-%E5%B9%B3%E8%A1%A1%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">1.3.</span> <span class="nav-text">**39.平衡二叉树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#49-%E6%8A%8A%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8D%A2%E6%88%90%E6%95%B4%E6%95%B0"><span class="nav-number">1.4.</span> <span class="nav-text">49.把字符串换成整数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#51-%E6%9E%84%E5%BB%BA%E4%B9%98%E7%A7%AF%E6%95%B0%E7%BB%84"><span class="nav-number">1.5.</span> <span class="nav-text">51.构建乘积数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#52-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%8C%B9%E9%85%8D"><span class="nav-number">1.6.</span> <span class="nav-text">52.正则表达式匹配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#53-%E8%A1%A8%E7%A4%BA%E6%95%B0%E5%80%BC%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.7.</span> <span class="nav-text">53.表示数值的字符串</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#54-%E5%AD%97%E7%AC%A6%E6%B5%81%E4%B8%AD%E7%AC%AC%E4%B8%80%E4%B8%AA%E4%B8%8D%E9%87%8D%E5%A4%8D%E7%9A%84%E5%AD%97%E7%AC%A6"><span class="nav-number">1.8.</span> <span class="nav-text">54.字符流中第一个不重复的字符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#55-%E9%93%BE%E8%A1%A8%E4%B8%AD%E7%8E%AF%E7%9A%84%E5%85%A5%E5%8F%A3%E7%BB%93%E7%82%B9"><span class="nav-number">1.9.</span> <span class="nav-text">**55.链表中环的入口结点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#56-%E5%88%A0%E9%99%A4%E9%93%BE%E8%A1%A8%E4%B8%AD%E9%87%8D%E5%A4%8D%E7%9A%84%E7%BB%93%E7%82%B9"><span class="nav-number">1.10.</span> <span class="nav-text">56.删除链表中重复的结点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#57-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E4%B8%8B%E4%B8%80%E4%B8%AA%E7%BB%93%E7%82%B9"><span class="nav-number">1.11.</span> <span class="nav-text">57.二叉树的下一个结点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#58-%E5%AF%B9%E7%A7%B0%E7%9A%84%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">1.12.</span> <span class="nav-text">58.对称的二叉树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#59-%E6%8C%89%E4%B9%8B%E5%AD%97%E5%BD%A2%E9%A1%BA%E8%AE%AF%E6%89%93%E5%8D%B0%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">1.13.</span> <span class="nav-text">59.按之字形顺讯打印二叉树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#60-%E6%8A%8A%E4%BA%8C%E5%8F%89%E6%A0%91%E6%89%93%E5%8D%B0%E6%88%90%E5%A4%9A%E8%A1%8C"><span class="nav-number">1.14.</span> <span class="nav-text">60.把二叉树打印成多行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#61-%E5%BA%8F%E5%88%97%E5%8C%96%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">1.15.</span> <span class="nav-text">**61.序列化二叉树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#62-%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E7%9A%84%E7%AC%ACK%E4%B8%AA%E7%BB%93%E7%82%B9"><span class="nav-number">1.16.</span> <span class="nav-text">62.二叉搜索树的第K个结点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#63-%E6%95%B0%E6%8D%AE%E6%B5%81%E4%B8%AD%E7%9A%84%E4%B8%AD%E4%BD%8D%E6%95%B0"><span class="nav-number">1.17.</span> <span class="nav-text">63.数据流中的中位数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#64-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%9A%84%E6%9C%80%E5%A4%A7%E5%80%BC"><span class="nav-number">1.18.</span> <span class="nav-text">**64.滑动窗口的最大值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#65-%E7%9F%A9%E9%98%B5%E4%B8%AD%E7%9A%84%E8%B7%AF%E5%BE%84"><span class="nav-number">1.19.</span> <span class="nav-text">**65.矩阵中的路径</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#66-%E6%9C%BA%E5%99%A8%E4%BA%BA%E7%9A%84%E8%BF%90%E5%8A%A8%E8%8C%83%E5%9B%B4"><span class="nav-number">1.20.</span> <span class="nav-text">**66.机器人的运动范围</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#67-%E5%89%AA%E7%BB%B3%E5%AD%90"><span class="nav-number">1.21.</span> <span class="nav-text">**67.剪绳子</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XuZhang"
+      src="/images/author.jpg">
+  <p class="site-author-name" itemprop="name">XuZhang</p>
+  <div class="site-description" itemprop="description">海阔凭鱼跃，天高任鸟飞</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/xuzhang1108" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;xuzhang1108" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/bu-ke-zhi-wei-zhi" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;bu-ke-zhi-wei-zhi" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>知乎</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class=""></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xuzhang</span>
+</div>
+
+<!--添加运行时间-->
+<span id="sitetime"></span>
+<script language=javascript>
+	function siteTime(){
+		window.setTimeout("siteTime()", 1000);
+		var seconds = 1000;
+		var minutes = seconds * 60;
+		var hours = minutes * 60;
+		var days = hours * 24;
+		var years = days * 365;
+		var today = new Date();
+		var todayYear = today.getFullYear();
+		var todayMonth = today.getMonth()+1;
+		var todayDate = today.getDate();
+		var todayHour = today.getHours();
+		var todayMinute = today.getMinutes();
+		var todaySecond = today.getSeconds();
+		/* 
+		Date.UTC() -- 返回date对象距世界标准时间(UTC)1970年1月1日午夜之间的毫秒数(时间戳)
+		year - 作为date对象的年份，为4位年份值
+		month - 0-11之间的整数，做为date对象的月份
+		day - 1-31之间的整数，做为date对象的天数
+		hours - 0(午夜24点)-23之间的整数，做为date对象的小时数
+		minutes - 0-59之间的整数，做为date对象的分钟数
+		seconds - 0-59之间的整数，做为date对象的秒数
+		microseconds - 0-999之间的整数，做为date对象的毫秒数
+        */
+		var t1 = Date.UTC(2021,05,14,12,00,00); //北京时间2018-2-13 00:00:00
+		var t2 = Date.UTC(todayYear,todayMonth,todayDate,todayHour,todayMinute,todaySecond);
+		var diff = t2-t1;
+		var diffYears = Math.floor(diff/years);
+		var diffDays = Math.floor((diff/days)-diffYears*365);
+		var diffHours = Math.floor((diff-(diffYears*365+diffDays)*days)/hours);
+		var diffMinutes = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours)/minutes);
+		var diffSeconds = Math.floor((diff-(diffYears*365+diffDays)*days-diffHours*hours-diffMinutes*minutes)/seconds);
+		document.getElementById("sitetime").innerHTML=" 已运行"+/*diffYears+" 年 "+*/diffDays+" 天 "+diffHours+" 小时 "+diffMinutes+" 分钟 "+diffSeconds+" 秒";
+	}
+	siteTime();
+</script>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+-->
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
